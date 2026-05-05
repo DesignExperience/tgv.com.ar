@@ -1,0 +1,3167 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TGV — Excelencia Informática</title>
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS & RESET
+═══════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#C8102E;--red-d:#9E0B22;--red-l:rgba(200,16,46,.08);--red-m:rgba(200,16,46,.15);
+  --ink:#0A0A0A;--ink2:#111;--ink3:#181818;--ink4:#222;--ink5:#2C2C2C;
+  --stone:#F7F6F4;--stone2:#EEEDE9;--stone3:#E0DED8;--stone4:#BDBBB4;
+  --mid-grey:#E8E8EA;--mid-grey2:#D4D4D8;
+  --muted:#7A7872;--border:rgba(0,0,0,.08);--border-d:rgba(255,255,255,.07);
+  --white:#FAFAF8;
+  --ff-display:-apple-system,'Inter',Arial,sans-serif;
+  --ff-body:-apple-system,'Inter',Arial,sans-serif;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-in-out:cubic-bezier(.76,0,.24,1);
+  --nav-h:60px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--ff-body);font-size:14px;line-height:1.6;color:var(--ink);background:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button{font-family:var(--ff-body);cursor:pointer}
+img{display:block;max-width:100%}
+
+/* ═══════════════════════════════════════════
+   SCROLL PROGRESS
+═══════════════════════════════════════════ */
+#progress{position:fixed;top:0;left:0;height:2px;background:var(--red);z-index:9999;width:0;transition:width .08s linear;pointer-events:none}
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+#nav{
+  position:sticky;top:0;z-index:500;
+  height:var(--nav-h);
+  background:rgba(10,10,10,.96);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border-d);
+  display:flex;align-items:center;
+  padding:0 40px;
+  gap:0;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;margin-right:40px;flex-shrink:0}
+.logo-mark{
+  height:26px;width:auto;display:block;flex-shrink:0;
+  object-fit:contain;
+}
+.logo-text{font-family:var(--ff-display);font-size:11px;font-weight:500;color:rgba(255,255,255,.55);letter-spacing:.5px;text-transform:uppercase}
+.logo-text span{color:rgba(255,255,255,.3);font-weight:400}
+.nav-links{display:flex;align-items:stretch;height:var(--nav-h);flex:1;justify-content:center}
+.nl{
+  display:flex;align-items:center;padding:0 16px;
+  color:rgba(255,255,255,.38);font-family:var(--ff-body);
+  font-size:11px;font-weight:500;letter-spacing:.3px;
+  cursor:pointer;position:relative;transition:color .15s;
+  white-space:nowrap;
+}
+.nl::after{
+  content:'';position:absolute;bottom:0;left:16px;right:16px;
+  height:1.5px;background:var(--red);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .2s var(--ease-out);
+}
+.nl:hover,.nl.act{color:#fff}
+.nl:hover::after,.nl.act::after{transform:scaleX(1)}
+.nav-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.nav-pill{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 16px;
+  font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
+  color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.08);
+  transition:all .15s;
+}
+.nav-pill:hover{color:#fff;border-color:rgba(255,255,255,.2)}
+.nav-pill svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.nav-cta{
+  background:var(--red);color:#fff;
+  padding:8px 20px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  border:none;transition:all .18s;position:relative;overflow:hidden;
+}
+.nav-cta::before{
+  content:'';position:absolute;inset:0;background:rgba(255,255,255,.08);
+  transform:translateX(-100%);transition:transform .25s var(--ease-out);
+}
+.nav-cta:hover{background:var(--red-d)}
+.nav-cta:hover::before{transform:translateX(0)}
+
+/* ═══════════════════════════════════════════
+   NAV DROPDOWN MEGA MENU
+═══════════════════════════════════════════ */
+.nl-drop{position:relative;display:flex;align-items:stretch}
+.nl-drop>.nl{gap:5px;height:100%}
+.nl-drop>.nl svg.caret{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.5;transition:transform .2s;flex-shrink:0}
+.nl-drop:hover>.nl svg.caret,.nl-drop.open>.nl svg.caret{transform:rotate(180deg)}
+
+.dropdown{
+  position:absolute;top:calc(var(--nav-h) - 1px);left:50%;
+  transform:translateX(-50%) translateY(-4px);
+  background:#0f0f0f;border:1px solid rgba(255,255,255,.07);
+  border-top:2px solid var(--red);
+  min-width:220px;opacity:0;pointer-events:none;
+  transition:opacity .18s var(--ease-out),transform .18s var(--ease-out);
+  z-index:600;
+}
+.nl-drop:hover .dropdown,.nl-drop.open .dropdown{
+  opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);
+}
+.dd-item{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 18px;
+  color:rgba(255,255,255,.45);font-size:11px;font-weight:500;letter-spacing:.2px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  cursor:pointer;transition:all .12s;
+  white-space:nowrap;
+}
+.dd-item:last-child{border-bottom:none}
+.dd-item:hover{background:rgba(200,16,46,.08);color:#fff;padding-left:22px}
+.dd-item .dd-dot{width:4px;height:4px;background:var(--red);border-radius:50%;flex-shrink:0}
+
+/* ═══════════════════════════════════════════
+   PAGE OVERLAY SYSTEM
+═══════════════════════════════════════════ */
+#page-overlay{
+  position:fixed;inset:0;z-index:800;
+  background:#0A0A0A;overflow-y:auto;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s var(--ease-out);
+}
+#page-overlay.open{opacity:1;pointer-events:auto}
+.page-inner{max-width:1100px;margin:0 auto;padding:60px 40px 80px}
+.page-back{
+  display:inline-flex;align-items:center;gap:8px;
+  color:rgba(255,255,255,.35);font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
+  cursor:pointer;margin-bottom:40px;transition:color .15s;border:none;background:none;
+}
+.page-back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .15s}
+.page-back:hover{color:#fff}
+.page-back:hover svg{transform:translateX(-3px)}
+.page-hero{margin-bottom:56px}
+.page-eyebrow{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.page-eyebrow::before{content:'';width:20px;height:1.5px;background:var(--red)}
+.page-title{font-family:var(--ff-display);font-size:clamp(32px,4vw,52px);font-weight:800;color:#fff;line-height:1.05;letter-spacing:-1.5px;margin-bottom:16px}
+.page-sub{color:rgba(255,255,255,.35);font-size:14px;line-height:1.8;max-width:600px}
+.page-divider{height:1px;background:rgba(255,255,255,.06);margin:40px 0}
+
+/* Cases grid on page */
+.cases-page-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:rgba(255,255,255,.04);margin-bottom:48px}
+.case-page-card{background:#111;padding:28px;cursor:pointer;transition:background .15s;position:relative;overflow:hidden}
+.case-page-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:transparent;transition:background .2s}
+.case-page-card:hover{background:#161616}
+.case-page-card:hover::before{background:var(--red)}
+.cpc-tag{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+.cpc-img{width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:14px;opacity:.7}
+.cpc-title{font-size:14px;font-weight:600;color:#fff;line-height:1.4;margin-bottom:8px}
+.cpc-desc{font-size:12px;color:rgba(255,255,255,.3);line-height:1.7}
+.cpc-kpis{display:flex;gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.05)}
+.cpc-kpi-n{font-size:16px;font-weight:700;color:#fff;line-height:1}
+.cpc-kpi-l{font-size:9px;color:rgba(255,255,255,.25);letter-spacing:.8px;text-transform:uppercase;margin-top:2px}
+.cpc-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--red);transition:gap .15s}
+.cpc-link svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.case-page-card:hover .cpc-link{gap:10px}
+
+/* Nosotros page */
+.nosotros-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.04);margin-bottom:48px}
+.nos-card{background:#111;padding:32px;transition:background .15s}
+.nos-card:hover{background:#161616}
+.nos-card-icon{width:40px;height:40px;border:1px solid rgba(200,16,46,.3);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.nos-card-icon svg{width:18px;height:18px;stroke:var(--red);fill:none;stroke-width:1.5}
+.nos-card-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:8px}
+.nos-card-text{font-size:12px;color:rgba(255,255,255,.3);line-height:1.8}
+.nos-card-link{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--red);cursor:pointer;transition:gap .15s}
+.nos-card-link svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2}
+.nos-card:hover .nos-card-link{gap:10px}
+
+/* Servicios page */
+.svc-page-list{display:grid;grid-template-columns:1fr;gap:1px;background:rgba(255,255,255,.04)}
+.svc-page-row{background:#111;padding:28px 32px;display:grid;grid-template-columns:220px 1fr auto;align-items:center;gap:32px;cursor:pointer;transition:background .15s}
+.svc-page-row:hover{background:#161616}
+.svc-page-name{font-size:14px;font-weight:700;color:#fff}
+.svc-page-sub{font-size:10px;color:var(--red);letter-spacing:.8px;text-transform:uppercase;margin-top:3px}
+.svc-page-desc{font-size:12px;color:rgba(255,255,255,.3);line-height:1.7}
+.svc-page-arr{width:32px;height:32px;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.svc-page-arr svg{width:14px;height:14px;stroke:rgba(255,255,255,.3);fill:none;stroke-width:2;transition:all .15s}
+.svc-page-row:hover .svc-page-arr{border-color:var(--red);background:var(--red)}
+.svc-page-row:hover .svc-page-arr svg{stroke:#fff;transform:translateX(2px)}
+
+/* Tendencias page */
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:rgba(255,255,255,.04)}
+.blog-card{background:#111;padding:28px;cursor:pointer;transition:background .15s;border:none}
+.blog-card:hover{background:#161616}
+.blog-tag{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:10px}
+.blog-title{font-size:13px;font-weight:700;color:#fff;line-height:1.5;margin-bottom:8px}
+.blog-excerpt{font-size:11px;color:rgba(255,255,255,.28);line-height:1.75}
+.blog-date{font-size:9px;color:rgba(255,255,255,.18);margin-top:14px;letter-spacing:.6px}
+
+/* Contact page */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.contact-info h3{font-size:13px;font-weight:700;color:#fff;margin-bottom:20px}
+.contact-region{padding:20px;border:1px solid rgba(255,255,255,.05);margin-bottom:1px;transition:border-color .15s}
+.contact-region:hover{border-color:rgba(200,16,46,.3)}
+.cr-name{font-size:11px;font-weight:700;color:var(--red);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px}
+.cr-detail{font-size:11px;color:rgba(255,255,255,.35);line-height:1.8}
+.contact-form-area{}
+.cf-label{display:block;font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px;margin-top:16px}
+.cf-input{
+  width:100%;background:#111;border:1px solid rgba(255,255,255,.07);padding:11px 14px;
+  color:#fff;font-size:13px;font-family:var(--ff-body);transition:border-color .15s;
+}
+.cf-input:focus{outline:none;border-color:var(--red)}
+.cf-input::placeholder{color:rgba(255,255,255,.2)}
+.cf-textarea{resize:vertical;min-height:100px}
+.cf-submit{
+  margin-top:20px;width:100%;background:var(--red);color:#fff;border:none;
+  padding:13px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  cursor:pointer;transition:background .15s;
+}
+.cf-submit:hover{background:var(--red-d)}
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+#hero{
+  background:var(--ink);
+  min-height:calc(100vh - var(--nav-h));
+  display:grid;grid-template-columns:1fr;
+  align-items:center;
+  padding:0 40px;
+  gap:60px;
+  position:relative;
+  overflow:hidden;
+}
+/* Hero background image — covers right half, bleeds into dark left, no overlay div needed */
+.hero-bg-img{
+  position:absolute;
+  top:0;right:0;bottom:0;
+  width:65%;
+  z-index:0;
+  /* Data center / server room — precision, scale, tech infrastructure */
+  background:url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1400&q=90') center/cover no-repeat;
+}
+/* Left-side feather: dark ink bleeds into the photo */
+.hero-bg-img::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,
+    var(--ink) 0%,
+    rgba(10,10,10,.72) 28%,
+    rgba(10,10,10,.18) 62%,
+    rgba(10,10,10,.30) 100%
+  );
+}
+/* Subtle identity-red vignette on the far right */
+.hero-bg-img::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,
+    transparent 55%,
+    rgba(200,16,46,.09) 100%
+  );
+}
+.hero-bg-grid{
+  position:absolute;inset:0;pointer-events:none;z-index:1;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:60px 60px;
+  /* fade grid out on right side where photo is visible */
+  -webkit-mask:linear-gradient(90deg,#000 0%,#000 38%,transparent 58%);
+  mask:linear-gradient(90deg,#000 0%,#000 38%,transparent 58%);
+}
+.hero-bg-glow{display:none}/* replaced by real photo */
+.hero-content{position:relative;z-index:2;padding:80px 0}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  color:var(--red);margin-bottom:24px;
+}
+.hero-eyebrow::before{content:'';width:24px;height:1.5px;background:var(--red);display:inline-block}
+#hero h1{
+  font-family:var(--ff-display);
+  font-size:clamp(40px,5.5vw,68px);
+  font-weight:800;color:#fff;
+  line-height:1.0;letter-spacing:-2px;
+  margin-bottom:22px;
+}
+#hero h1 em{
+  color:transparent;font-style:normal;
+  -webkit-text-stroke:1.5px var(--red);
+  display:block;
+}
+.hero-sub{
+  color:rgba(255,255,255,.35);font-size:14px;
+  line-height:1.8;margin-bottom:36px;max-width:440px;
+  font-weight:300;
+}
+.hero-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.btn-primary{
+  background:var(--red);color:#fff;
+  padding:13px 28px;font-size:11px;font-weight:700;
+  letter-spacing:.8px;text-transform:uppercase;
+  border:none;transition:all .2s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-primary svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;transition:transform .2s}
+.btn-primary:hover{background:var(--red-d)}
+.btn-primary:hover svg{transform:translateX(3px)}
+.btn-outline{
+  background:transparent;color:rgba(255,255,255,.5);
+  padding:12px 24px;font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.12);transition:all .18s;
+}
+.btn-outline:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+
+.hero-right{position:relative;z-index:2;padding:80px 0}
+.kpi-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.07);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.kpi-cell{
+  background:rgba(10,10,10,.72);padding:28px 24px;
+  position:relative;overflow:hidden;
+}
+.kpi-cell::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1.5px;
+  background:transparent;transition:background .2s;
+}
+.kpi-cell:hover::before{background:var(--red)}
+.kpi-n{
+  font-family:var(--ff-display);font-size:36px;font-weight:800;
+  color:#fff;line-height:1;margin-bottom:6px;letter-spacing:-1px;
+}
+.kpi-n sup{font-size:16px;color:var(--red);vertical-align:super;letter-spacing:0}
+.kpi-l{font-size:10px;color:rgba(255,255,255,.25);letter-spacing:1.2px;text-transform:uppercase}
+.kpi-wide{grid-column:span 2;background:#0C0C0C}
+.kpi-wide-inner{display:flex}
+.kpi-seg{flex:1;padding:18px 22px;border-right:1px solid rgba(255,255,255,.04)}
+.kpi-seg:last-child{border:none}
+.seg-n{font-family:var(--ff-display);font-size:16px;font-weight:700;color:#fff}
+.seg-n em{color:var(--red);font-style:normal}
+.seg-l{font-size:9px;color:rgba(255,255,255,.22);letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+.hero-scroll-hint{
+  display:flex;align-items:center;gap:8px;
+  margin-top:40px;font-size:10px;color:rgba(255,255,255,.2);
+  letter-spacing:1px;text-transform:uppercase;
+}
+.scroll-line{width:1px;height:32px;background:linear-gradient(to bottom,rgba(255,255,255,.15),transparent)}
+
+/* ═══════════════════════════════════════════
+   PARTNERS MARQUEE
+═══════════════════════════════════════════ */
+#partners{
+  background:var(--red);padding:0;overflow:hidden;height:44px;
+  display:flex;align-items:center;
+}
+.marquee-track{
+  display:flex;align-items:center;gap:0;
+  animation:marquee 24s linear infinite;
+  white-space:nowrap;
+}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.marquee-item{
+  display:inline-flex;align-items:center;gap:0;padding:0 36px;
+  font-size:11px;font-weight:700;color:#fff;letter-spacing:.4px;
+  border-right:1px solid rgba(255,255,255,.15);
+  white-space:nowrap;height:44px;
+}
+.marquee-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);margin:0 14px;flex-shrink:0}
+
+/* ═══════════════════════════════════════════
+   SECTION COMMONS
+═══════════════════════════════════════════ */
+.section{padding:80px 40px}
+.section.dark{background:var(--ink)}
+.section.stone{background:var(--stone)}
+.section.grey{background:var(--mid-grey)}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--red);margin-bottom:12px;
+}
+.eyebrow::before{content:'';width:18px;height:1.5px;background:var(--red);flex-shrink:0}
+.sec-title{
+  font-family:var(--ff-display);font-size:clamp(26px,3.2vw,38px);
+  font-weight:800;line-height:1.05;letter-spacing:-1px;color:var(--ink);
+}
+.sec-title.light{color:#fff}
+.sec-sub{font-size:14px;color:var(--muted);line-height:1.75;max-width:500px;margin-top:10px;font-weight:300}
+.sec-sub.light{color:rgba(255,255,255,.35)}
+.sec-head{margin-bottom:48px}
+
+/* ═══════════════════════════════════════════
+   SERVICES — REDESIGN COMPLETO
+   Paleta: negro / rojo / blanco
+   UX: jerarquía clara, todo en viewport
+═══════════════════════════════════════════ */
+#servicios{padding:0;background:var(--ink)}
+
+/* ── Header rojo ── */
+.svc-header{
+  padding:48px 48px 0;
+  background:var(--red);
+  border-bottom:none;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  position:relative;overflow:hidden;
+}
+.svc-header::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 100% at 100% 50%,rgba(0,0,0,.22) 0%,transparent 70%),
+    linear-gradient(180deg,rgba(0,0,0,.1) 0%,transparent 100%);
+}
+/* grid texture */
+.svc-header::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.svc-header-left{padding-bottom:32px;position:relative;z-index:1}
+.svc-header-left .eyebrow{
+  color:rgba(255,255,255,.6)!important;font-size:9px!important;
+  letter-spacing:2.5px!important;
+}
+.svc-header-left .eyebrow::before{background:rgba(255,255,255,.45)!important}
+.svc-header-left .sec-title{
+  color:#fff!important;font-size:clamp(28px,4vw,48px)!important;
+  letter-spacing:-1.5px!important;line-height:1.0!important;margin-bottom:6px!important;
+}
+.svc-header-left .sec-sub{
+  color:rgba(255,255,255,.65)!important;font-size:13px!important;
+  max-width:420px!important;
+}
+.svc-tabs{
+  display:flex;gap:0;align-items:flex-end;position:relative;z-index:1;
+}
+.svc-tab{
+  padding:14px 24px;
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:rgba(255,255,255,.45);background:transparent;border:none;
+  border-bottom:2px solid transparent;cursor:pointer;
+  transition:all .18s;white-space:nowrap;
+  font-family:var(--ff-body);
+}
+.svc-tab.act{color:#fff;border-bottom-color:rgba(255,255,255,.9)}
+.svc-tab:hover:not(.act){color:rgba(255,255,255,.8)}
+
+/* ── Body container ── */
+.svc-body{
+  display:grid;grid-template-columns:220px 1fr;
+  /* Height: fill remaining viewport after nav + svc-header */
+  height:calc(100vh - var(--nav-h) - 148px);
+  min-height:480px;
+  background:var(--ink);
+  overflow:hidden;
+}
+
+/* ── Sidebar — dark ── */
+.svc-sidebar{
+  background:var(--ink2);
+  border-right:1px solid rgba(255,255,255,.06);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+#svc-list{flex:1;overflow-y:auto}
+/* custom scrollbar */
+#svc-list::-webkit-scrollbar{width:3px}
+#svc-list::-webkit-scrollbar-track{background:transparent}
+#svc-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+.svc-sidebar-label{
+  padding:18px 20px 8px;
+  font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.25);
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.svc-item{
+  padding:13px 20px;
+  cursor:pointer;
+  border-left:2px solid transparent;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:space-between;
+  transition:all .15s;
+  background:transparent;
+}
+.svc-item:hover{background:rgba(255,255,255,.04);border-left-color:rgba(255,255,255,.15)}
+.svc-item.act{
+  background:rgba(200,16,46,.08);
+  border-left-color:var(--red);
+}
+.svc-item-info{}
+.svc-item-name{font-size:13px;font-weight:600;color:rgba(255,255,255,.5);transition:color .15s}
+.svc-item:hover .svc-item-name{color:rgba(255,255,255,.8)}
+.svc-item.act .svc-item-name{color:#fff}
+.svc-item-sub{font-size:10px;color:rgba(255,255,255,.28);margin-top:2px;font-weight:300}
+.svc-item.act .svc-item-sub{color:rgba(255,255,255,.4)}
+.svc-item-ico{
+  width:18px;height:18px;
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.15);transition:color .15s;flex-shrink:0;
+}
+.svc-item.act .svc-item-ico{color:var(--red)}
+.svc-item-ico svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.svc-sidebar-cta{
+  padding:14px 16px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.btn-sidebar-cta{
+  width:100%;background:var(--red);color:#fff;
+  padding:10px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  border:none;transition:background .15s;font-family:var(--ff-body);cursor:pointer;
+}
+.btn-sidebar-cta:hover{background:var(--red-d)}
+
+/* ── Panel wrapper ── */
+.svc-panel-wrap{overflow:hidden;position:relative;display:flex;flex-direction:column;background:var(--ink);height:100%;min-height:0}
+.svc-panel{
+  display:none;padding:0;
+  animation:panelIn .2s var(--ease-out);
+  overflow:hidden;
+}
+.svc-panel.act{display:flex;flex-direction:column;height:100%;flex:1;min-height:0}
+@keyframes panelIn{
+  from{opacity:0;transform:translateX(8px)}
+  to{opacity:1;transform:translateX(0)}
+}
+
+/* ── Panel section labels ── */
+.panel-section-label{
+  font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-bottom:10px;margin-top:20px;
+}
+.panel-section-label:first-child{margin-top:0}
+
+/* ── Tech tags — compact ── */
+.tech-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:0}
+.tech-tag{
+  background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);
+  font-size:11px;font-weight:500;padding:4px 11px;
+  border:1px solid rgba(255,255,255,.08);transition:all .13s;cursor:default;
+}
+.tech-tag:hover{background:rgba(200,16,46,.1);border-color:rgba(200,16,46,.3);color:var(--red)}
+
+/* ── Cases accordion — dark ── */
+.case-acc{border:1px solid rgba(255,255,255,.06);margin-bottom:2px;overflow:hidden}
+.case-acc-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;cursor:pointer;
+  background:rgba(255,255,255,.02);
+  transition:background .13s;
+}
+.case-acc-hd:hover{background:rgba(255,255,255,.05)}
+.case-acc-hd.open{background:rgba(200,16,46,.12);border-bottom:1px solid rgba(200,16,46,.2)}
+.case-acc-left{display:flex;align-items:center;gap:10px}
+.case-tag{
+  font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 8px;background:rgba(200,16,46,.15);color:var(--red);
+  border:1px solid rgba(200,16,46,.25);
+}
+.case-acc-hd.open .case-tag{background:rgba(200,16,46,.25);color:#ff6b6b;border-color:rgba(200,16,46,.4)}
+.case-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.55)}
+.case-acc-hd:hover .case-name{color:rgba(255,255,255,.85)}
+.case-acc-hd.open .case-name{color:#fff}
+.case-chev{
+  font-size:10px;color:rgba(255,255,255,.2);
+  transition:transform .2s var(--ease-out);display:inline-block;
+}
+.case-acc-hd.open .case-chev{transform:rotate(180deg);color:var(--red)}
+.case-acc-body{
+  display:none;background:rgba(0,0,0,.3);
+  padding:18px 16px;
+  animation:panelIn .15s var(--ease-out);
+}
+.case-acc-body.open{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.case-desc{font-size:11px;color:rgba(255,255,255,.38);line-height:1.7;grid-column:span 2;font-weight:300}
+.case-kpi{background:rgba(255,255,255,.03);padding:12px;border:1px solid rgba(255,255,255,.06)}
+.case-kpi-n{font-family:var(--ff-display);font-size:18px;font-weight:800;color:#fff;margin-bottom:2px}
+.case-kpi-n em{color:var(--red);font-style:normal}
+.case-kpi-l{font-size:8px;color:rgba(255,255,255,.2);letter-spacing:1px;text-transform:uppercase}
+.case-acc-cta{grid-column:span 2}
+.case-acc-cta button{
+  background:transparent;color:var(--red);
+  font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:6px 0;border:none;border-bottom:1px solid rgba(200,16,46,.25);
+  transition:all .15s;font-family:var(--ff-body);cursor:pointer;
+}
+.case-acc-cta button:hover{color:#ff6b6b;border-color:rgba(255,107,107,.4)}
+
+/* ═══════════════════════════════════════════
+   RICH SERVICE PANEL — Dark, unified, viewport-fit
+   ┌─────────────────┬────────────┐
+   │  HERO (texto)   │ video      │
+   │                 │ qué hacemos│
+   ├────────── CÓMO LO HACEMOS ───┤
+   └──── stack + casos (scroll) ──┘
+═══════════════════════════════════════════ */
+.panel-hero{
+  background:var(--ink);
+  flex:0 0 auto;
+  display:contents;/* dissolve — children go into .svc-panel grid */
+}
+/* diagonal red accent */
+.panel-hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:linear-gradient(110deg,rgba(200,16,46,.07) 0%,transparent 45%);
+}
+/* grid texture overlay */
+.panel-hero-grid-bg{
+  position:absolute;inset:0;pointer-events:none;z-index:0;
+  /* Grid lines */
+  background-image:
+    linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size:52px 52px;
+}
+/* Layered backgrounds on the left panel */
+.panel-hero-left{
+  background:
+    radial-gradient(ellipse 60% 50% at 0% 100%, rgba(200,16,46,.08) 0%, transparent 70%),
+    linear-gradient(160deg, rgba(255,255,255,.03) 0%, rgba(0,0,0,0) 60%),
+    rgba(18,18,20,1);
+}
+
+/* LEFT — main content area */
+/* Hero row: text left + video right */
+.panel-hero-row{
+  display:flex;flex-direction:row;
+  flex-shrink:0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  position:relative;
+  overflow:hidden;/* clip the radial gradients */
+}
+.panel-hero-left{
+  padding:28px 32px 28px;
+  display:flex;flex-direction:column;justify-content:flex-start;
+  position:relative;z-index:1;
+  gap:0;
+  flex:1;min-width:0;
+  /* background defined above in panel-hero-grid-bg block */
+}
+.panel-hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--red);margin-bottom:12px;
+}
+.panel-hero-eyebrow::before{content:'';width:14px;height:1.5px;background:var(--red);flex-shrink:0}
+.panel-hero-title{
+  font-family:var(--ff-display);
+  font-size:clamp(26px,2.8vw,38px);
+  font-weight:800;color:#fff;
+  line-height:1.0;letter-spacing:-1.2px;
+  margin-bottom:0;
+}
+.panel-hero-title small{
+  display:block;
+  font-family:var(--ff-body);
+  font-size:11px;font-weight:400;letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.32);
+  margin-top:6px;
+}
+/* divider line */
+.panel-hero-divider{
+  width:32px;height:1.5px;
+  background:linear-gradient(90deg,var(--red),transparent);
+  margin:14px 0;
+  flex-shrink:0;
+}
+.panel-hero-sub{
+  font-size:13px;color:rgba(255,255,255,.52);line-height:1.75;
+  font-weight:300;max-width:420px;
+  margin-bottom:22px;
+}
+.panel-hero-btns{display:flex;gap:8px;align-items:center}
+.btn-panel-pri{
+  background:var(--red);color:#fff;
+  font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:11px 22px;border:none;transition:all .18s;font-family:var(--ff-body);
+  cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+}
+.btn-panel-pri::after{content:'↗';font-size:12px}
+.btn-panel-pri:hover{background:var(--red-d)}
+.btn-panel-sec{
+  background:transparent;color:rgba(255,255,255,.35);
+  font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
+  padding:10px 16px;border:1px solid rgba(255,255,255,.1);
+  transition:all .15s;font-family:var(--ff-body);cursor:pointer;
+}
+.btn-panel-sec:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+.btn-panel-sec.on{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* RIGHT — video panel, 50% of the hero row */
+.panel-hero-right{
+  display:flex;flex-direction:column;
+  background:transparent;
+  padding:20px 20px 20px 16px;
+  position:relative;z-index:1;
+  border-left:1px solid rgba(255,255,255,.07);
+  flex:0 0 50%;
+  min-width:0;
+  justify-content:center;
+}
+/* The actual video block inside gets rounded + shadow */
+.panel-videos-list{
+  display:flex;flex-direction:column;
+  flex:0 0 auto;
+  border-radius:4px;
+  overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+.panel-videos-header{display:none}
+
+/* ── Video Carousel ── */
+.vc-wrap{position:relative;width:100%;border-radius:4px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.vc-stage{position:relative;width:100%;aspect-ratio:16/9}
+.vc-slide{
+  position:absolute;inset:0;
+  cursor:pointer;overflow:hidden;background:#1a1a1a;
+  opacity:0;transition:opacity .45s ease;pointer-events:none;
+}
+.vc-slide.act{opacity:1;pointer-events:auto}
+
+/* Controls overlay — sits at bottom of the video */
+.vc-controls{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 10px;
+  pointer-events:none;/* let clicks pass through to the slide */
+  z-index:10;
+}
+.vc-controls>*{pointer-events:auto}
+/* dots sit at bottom center, independently */
+.vc-dots{
+  position:absolute;bottom:10px;left:0;right:0;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.vc-arrow{
+  width:26px;height:26px;flex-shrink:0;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:#fff;transition:background .15s;padding:0;
+}
+.vc-arrow:hover{background:rgba(255,255,255,.28)}
+.vc-arrow svg{width:13px;height:13px}
+/* .vc-dots positioned absolutely in .vc-controls */
+.vc-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(255,255,255,.3);cursor:pointer;
+  transition:all .22s;flex-shrink:0;display:inline-block;
+}
+.vc-dot.act{width:18px;border-radius:3px;background:#fff}
+.vc-dot:hover:not(.act){background:rgba(255,255,255,.6)}
+
+/* panel-video-item kept for thumb/play/info reuse */
+.panel-video-item{
+  cursor:pointer;position:relative;overflow:hidden;
+  background:#1a1a1a;aspect-ratio:16/9;width:100%;display:block;
+}
+/* title inside carousel slide */
+.vc-title{font-size:13px;font-weight:700;color:#fff;letter-spacing:.05px;line-height:1.35}
+.panel-video-thumb{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,#1a1a1a 0%,#2a0a0a 50%,#1a1a1a 100%);
+}
+.panel-video-thumb img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  opacity:.65;transition:opacity .3s ease,transform .4s ease;
+}
+.panel-video-thumb img[src*="maxresdefault"]{
+  /* fallback handled by onerror chain */
+}
+.panel-video-item:hover .panel-video-thumb img{opacity:.85;transform:scale(1.04)}
+.panel-video-thumb::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.1) 40%,rgba(0,0,0,.75) 100%);
+  pointer-events:none;
+}
+.panel-video-play{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;
+}
+.panel-video-play svg{width:48px;height:48px;filter:drop-shadow(0 2px 12px rgba(0,0,0,.7));transition:transform .2s ease}
+.panel-video-item:hover .panel-video-play svg{transform:scale(1.12)}
+.panel-video-info{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:14px 16px;z-index:3;
+}
+.panel-video-yt{display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.panel-video-yt-icon{
+  width:14px;height:10px;background:#ff0000;border-radius:2px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.panel-video-yt-icon::after{
+  content:'';width:0;height:0;
+  border-style:solid;border-width:3px 0 3px 6px;
+  border-color:transparent transparent transparent #fff;
+}
+.panel-video-title{font-size:13px;font-weight:700;color:#fff;letter-spacing:.05px;line-height:1.35}
+.panel-video-channel{font-size:10px;color:rgba(255,255,255,.4);margin-top:3px}
+.panel-video-label{display:none}
+
+/* Cases simplified */
+.cases-simple{display:flex;flex-direction:column;gap:0}
+.case-simple-row{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05);
+  cursor:pointer;transition:all .15s;
+  text-decoration:none;
+}
+.case-simple-row:last-child{border-bottom:none}
+.case-simple-row:hover .case-simple-name{color:#fff}
+.case-simple-row:hover .case-simple-tag{background:rgba(200,16,46,.25);color:#ff6b6b;border-color:rgba(200,16,46,.4)}
+.case-simple-row:hover .case-simple-arrow{background:var(--red-d);transform:scale(1.05)}
+.case-simple-tag{
+  font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:3px 9px;background:rgba(200,16,46,.12);color:var(--red);
+  border:1px solid rgba(200,16,46,.2);white-space:nowrap;flex-shrink:0;transition:all .13s;
+}
+.case-simple-name{
+  font-size:13px;font-weight:600;color:rgba(255,255,255,.65);
+  line-height:1.3;flex:1;transition:color .13s;
+}
+/* Arrow button — rightmost, red square */
+.case-simple-arrow{
+  width:28px;height:28px;flex-shrink:0;
+  background:var(--red);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s, transform .15s;
+  margin-left:12px;
+}
+.case-simple-arrow svg{
+  width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;
+}.panel-video-play svg{width:36px;height:36px}
+.panel-video-label{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(0,0,0,.9));
+  padding:20px 10px 8px;
+}
+.panel-video-yt{
+  display:flex;align-items:center;gap:5px;margin-bottom:3px;
+}
+.panel-video-yt-icon{
+  width:16px;height:11px;background:red;border-radius:2px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.panel-video-yt-icon::after{
+  content:'';width:0;height:0;
+  border-style:solid;border-width:3.5px 0 3.5px 7px;
+  border-color:transparent transparent transparent #fff;
+}
+.panel-video-title{font-size:13px;font-weight:700;color:#fff;letter-spacing:.05px;line-height:1.35}
+.panel-video-channel{font-size:10px;color:rgba(255,255,255,.4);margin-top:3px}
+
+/* panel-que — hidden: redundant with description */
+.panel-que{display:none!important}
+
+/* panel-como — hidden: redundant */
+.panel-como{display:none!important}
+
+/* Stack + cases — clean drawer */
+.panel-body-inner{
+  padding:16px 32px 20px;
+  background:var(--ink);
+  overflow-y:auto;
+  flex:1;/* fills ALL remaining space — eliminates bottom void */
+  min-height:0;/* required for flex overflow scroll */
+}
+.panel-body-inner::-webkit-scrollbar{width:3px}
+.panel-body-inner::-webkit-scrollbar-track{background:transparent}
+.panel-body-inner::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
+
+/* panel-top (legacy) hidden since we use panel-hero now */
+.panel-top{display:none}
+#cmpbar{
+  background:var(--ink2);border-top:1px solid rgba(200,16,46,.3);
+  padding:12px 40px;
+  display:none;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+  position:sticky;bottom:0;z-index:200;
+}
+#cmpbar.on{display:flex}
+.cmp-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.cmp-chips{display:flex;gap:6px;flex-wrap:wrap}
+.cmp-chip{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.06);color:#fff;
+  font-size:10px;font-weight:600;padding:5px 10px;
+  border:1px solid rgba(255,255,255,.08);
+}
+.chip-x{color:rgba(255,255,255,.3);cursor:pointer;transition:color .13s}
+.chip-x:hover{color:#fff}
+.btn-cmp{
+  background:var(--red);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:9px 20px;border:none;transition:background .15s;font-family:var(--ff-body);
+}
+.btn-cmp:hover{background:var(--red-d)}
+
+/* ═══════════════════════════════════════════
+   WHY TGV
+═══════════════════════════════════════════ */
+.why-layout{display:grid;grid-template-columns:1fr 1.3fr;gap:80px;align-items:start}
+.why-text .sec-title{color:#fff}
+.why-text .sec-sub{color:rgba(255,255,255,.3)}
+.why-text .eyebrow{color:var(--red)}
+.why-counters{display:flex;flex-direction:column;gap:1px;margin-top:36px}
+.why-counter{
+  display:flex;align-items:center;gap:20px;
+  padding:16px 0;border-bottom:1px solid rgba(255,255,255,.05);
+}
+.why-counter:last-child{border:none}
+.wc-n{font-family:var(--ff-display);font-size:28px;font-weight:800;color:var(--red);flex-shrink:0;width:80px;letter-spacing:-1px}
+.wc-info{}
+.wc-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:2px}
+.wc-desc{font-size:12px;color:rgba(255,255,255,.28);font-weight:300}
+.why-boxes{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.04);align-content:start}
+.why-box{
+  background:var(--ink3);padding:28px 24px;
+  position:relative;overflow:hidden;cursor:default;
+  transition:background .15s;
+}
+.why-box:hover{background:var(--ink4)}
+.why-box-num{
+  font-family:var(--ff-display);font-size:11px;font-weight:700;
+  color:rgba(255,255,255,.12);letter-spacing:1px;margin-bottom:12px;
+}
+.why-box-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
+.why-box-p{font-size:12px;color:rgba(255,255,255,.32);line-height:1.65;font-weight:300}
+.why-box-bar{
+  position:absolute;bottom:0;left:0;height:2px;
+  background:var(--red);width:0;transition:width .3s var(--ease-out);
+}
+.why-box:hover .why-box-bar{width:100%}
+
+/* ═══════════════════════════════════════════
+   TEAM SLIDER
+═══════════════════════════════════════════ */
+#team-slider{position:relative;overflow:hidden;background:var(--ink);height:580px}
+.ts-track{display:flex;height:100%;transition:transform .7s cubic-bezier(.76,0,.24,1)}
+.ts-slide{
+  min-width:100%;height:100%;position:relative;flex-shrink:0;overflow:hidden;
+}
+.ts-slide-bg{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  transition:transform 7s ease;
+  transform:scale(1.06);
+}
+.ts-slide.active .ts-slide-bg{transform:scale(1)}
+.ts-slide-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(105deg,rgba(5,5,5,.88) 0%,rgba(5,5,5,.6) 42%,rgba(5,5,5,.15) 100%);
+}
+/* subtle red vignette on left */
+.ts-slide-overlay::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(200,16,46,.08) 0%,transparent 40%);
+}
+.ts-slide-content{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:0 80px;max-width:620px;z-index:2;
+}
+.ts-slide-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--red);margin-bottom:20px;
+}
+.ts-slide-tag::before{content:'';width:20px;height:1.5px;background:var(--red);display:inline-block}
+.ts-why-tag{color:#fff!important}
+.ts-why-tag::before{background:#fff!important}
+.ts-slide-title{
+  font-family:var(--ff-display);
+  font-size:clamp(28px,3.5vw,46px);font-weight:800;color:#fff;
+  line-height:1.05;letter-spacing:-1.2px;margin-bottom:16px;
+}
+.ts-slide-desc{
+  font-size:14px;color:rgba(255,255,255,.55);line-height:1.8;
+  font-weight:300;margin-bottom:32px;max-width:460px;
+}
+.ts-slide-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--red);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:13px 26px;border:none;font-family:var(--ff-body);
+  cursor:pointer;transition:background .15s;align-self:flex-start;
+}
+.ts-slide-cta:hover{background:var(--red-d)}
+.ts-slide-cta svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;transition:transform .2s}
+.ts-slide-cta:hover svg{transform:translateX(3px)}
+
+/* nav arrows */
+.ts-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:48px;height:48px;background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,255,255,.12);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:10;transition:all .18s;backdrop-filter:blur(4px);
+}
+.ts-arrow:hover{background:var(--red);border-color:var(--red)}
+.ts-arrow svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5}
+.ts-prev{left:28px}
+.ts-next{right:28px}
+
+/* progress dots */
+.ts-dots{
+  position:absolute;bottom:28px;left:80px;
+  display:flex;gap:6px;z-index:10;align-items:center;
+}
+.ts-dot{
+  width:24px;height:2.5px;background:rgba(255,255,255,.18);
+  cursor:pointer;transition:all .3s;
+}
+.ts-dot.active{background:var(--red);width:40px}
+
+/* counter */
+.ts-counter{
+  position:absolute;bottom:24px;right:32px;
+  font-size:11px;font-weight:700;color:rgba(255,255,255,.2);
+  letter-spacing:2px;z-index:10;
+}
+.ts-counter em{color:rgba(255,255,255,.55);font-style:normal}
+
+/* Presencia slide full-bleed */
+.ts-presencia-layout{
+  position:absolute;inset:0;
+  z-index:2;
+}
+.ts-presencia-left{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:0 80px;
+  height:100%;width:52%;
+}
+.ts-presencia-right{
+  position:absolute;inset:0;z-index:0;overflow:hidden;
+}
+.ts-presencia-img{
+  width:100%;height:100%;object-fit:cover;object-position:center center;
+  filter:brightness(.55) saturate(.8);
+  transition:transform 7s ease;
+  transform:scale(1.05);
+}
+.ts-slide.active .ts-presencia-img{transform:scale(1)}
+.ts-presencia-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(5,5,5,1) 0%,rgba(5,5,5,.9) 25%,rgba(5,5,5,.4) 55%,transparent 80%);
+}
+.ts-presencia-pins{
+  position:absolute;inset:0;z-index:3;pointer-events:none;
+}
+.ts-pin{
+  position:absolute;width:8px;height:8px;
+  background:var(--red);border-radius:50%;
+  transform:translate(-50%,-50%);
+}
+.ts-pin::before{
+  content:'';position:absolute;inset:-5px;
+  border:1.5px solid rgba(200,16,46,.7);border-radius:50%;
+  animation:pinPulse 2.8s ease-out infinite;
+}
+.ts-pin::after{
+  content:attr(data-label);position:absolute;
+  left:14px;top:-5px;
+  font-size:9px;font-weight:700;color:rgba(255,255,255,.85);
+  letter-spacing:1.2px;text-transform:uppercase;white-space:nowrap;
+  text-shadow:0 1px 6px rgba(0,0,0,1);
+}
+.ts-pin:nth-child(2)::before{animation-delay:.7s}
+.ts-pin:nth-child(3)::before{animation-delay:1.4s}
+.ts-pin:nth-child(4)::before{animation-delay:2.1s}
+@keyframes pinPulse{
+  0%{opacity:.9;transform:scale(1)}
+  100%{opacity:0;transform:scale(4)}
+}
+
+/* ═══════════════════════════════════════════
+   ERP SECTION
+═══════════════════════════════════════════ */
+.erp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:48px;background:var(--mid-grey2)}
+.erp-card{
+  background:var(--white);padding:40px 36px;
+  position:relative;overflow:hidden;cursor:pointer;
+  transition:all .2s;
+}
+.erp-card:hover{background:var(--stone)}
+.erp-card-accent{
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--stone3);transition:background .2s;
+}
+.erp-card:hover .erp-card-accent{background:var(--red)}
+.erp-card-logo{
+  font-family:var(--ff-display);font-size:28px;font-weight:800;
+  color:var(--ink);letter-spacing:-1px;margin-bottom:6px;
+}
+.erp-card-logo span{color:var(--red)}
+.erp-card-sub{font-size:11px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;font-weight:500;margin-bottom:20px}
+.erp-card-desc{font-size:13px;color:var(--muted);line-height:1.75;font-weight:300;margin-bottom:24px}
+.erp-features{display:flex;flex-direction:column;gap:8px}
+.erp-feature{
+  display:flex;align-items:center;gap:10px;
+  font-size:12px;color:var(--ink);font-weight:500;
+}
+.erp-feature::before{
+  content:'';width:6px;height:6px;background:var(--red);flex-shrink:0;
+  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+}
+.erp-card-link{
+  margin-top:24px;display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--red);
+}
+.erp-card-link svg{width:12px;height:12px;stroke:var(--red);fill:none;stroke-width:2.5;transition:transform .2s}
+.erp-card:hover .erp-card-link svg{transform:translateX(4px)}
+
+/* ═══════════════════════════════════════════
+   IA & AUTOMATION SECTION
+═══════════════════════════════════════════ */
+.ia-section{background:var(--ink);padding:80px 40px}
+.ia-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:80px;align-items:center}
+.ia-text .sec-title{color:#fff}
+.ia-text .sec-sub{color:rgba(255,255,255,.3)}
+.ia-stack{display:flex;flex-direction:column;gap:1px;margin-top:28px}
+.ia-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05);
+  cursor:default;
+}
+.ia-row:last-child{border:none}
+.ia-row-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.5)}
+.ia-row-tags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.ia-pill{
+  font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:3px 9px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);
+  border:1px solid rgba(255,255,255,.06);
+}
+.ia-visual{position:relative}
+.ia-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.04)}
+.ia-stat{background:var(--ink3);padding:28px 24px}
+.ia-stat-n{
+  font-family:var(--ff-display);font-size:36px;font-weight:800;
+  color:#fff;line-height:1;margin-bottom:6px;letter-spacing:-1px;
+}
+.ia-stat-n em{color:var(--red);font-style:normal}
+.ia-stat-l{font-size:10px;color:rgba(255,255,255,.2);letter-spacing:1.2px;text-transform:uppercase}
+.ia-cta-row{grid-column:span 2;background:var(--red);padding:20px 24px;display:flex;align-items:center;justify-content:space-between}
+.ia-cta-text{font-size:13px;font-weight:600;color:#fff}
+.ia-cta-text span{opacity:.65;font-weight:300}
+.btn-ia-cta{
+  background:#fff;color:var(--red);
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:9px 20px;border:none;transition:all .15s;font-family:var(--ff-body);flex-shrink:0;
+}
+.btn-ia-cta:hover{background:rgba(255,255,255,.85)}
+
+/* ═══════════════════════════════════════════
+   CASOS
+═══════════════════════════════════════════ */
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:36px}
+.filter-btn{
+  padding:8px 16px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  background:transparent;color:rgba(0,0,0,.35);
+  border:1.5px solid rgba(0,0,0,.12);transition:all .15s;font-family:var(--ff-body);
+}
+.filter-btn:hover{color:#000;border-color:rgba(0,0,0,.35)}
+.filter-btn.act{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* ── Grid layout ── */
+.cases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.cases-grid .case-card:first-child{grid-column:span 2}
+
+/* ── Base card ── */
+.case-card{
+  position:relative;overflow:hidden;cursor:pointer;
+  background:#fff;
+  border:1px solid rgba(0,0,0,.08);
+  transition:transform .22s var(--ease-out),box-shadow .22s var(--ease-out),border-color .22s;
+  display:flex;flex-direction:column;
+}
+.case-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 16px 48px rgba(0,0,0,.12);
+  border-color:rgba(200,16,46,.35);
+}
+.case-card.hidden{display:none}
+
+/* ── Image area ── */
+.cc-img{
+  position:relative;width:100%;height:200px;overflow:hidden;
+  flex-shrink:0;
+}
+.cases-grid .case-card:first-child .cc-img{height:260px}
+.cc-img img{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(1) saturate(1);
+  transition:transform .5s var(--ease-out),filter .3s;
+}
+.case-card:hover .cc-img img{transform:scale(1.04);filter:brightness(.95) saturate(1)}
+.cc-img-overlay{display:none}
+.cc-img-tag{
+  position:absolute;top:14px;left:14px;
+  background:var(--red);color:#fff;
+  font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  padding:4px 10px;
+}
+
+/* ── Body ── */
+.cc-body{padding:22px 24px 20px;display:flex;flex-direction:column;flex:1;gap:14px}
+.cc-title{font-size:15px;font-weight:700;color:#111;line-height:1.3}
+.cases-grid .case-card:first-child .cc-title{font-size:18px}
+
+/* ── Preview rows ── */
+.cc-detail{display:flex;flex-direction:column;gap:10px}
+.cc-row{display:flex;gap:10px;align-items:flex-start}
+.cc-row-label{
+  flex-shrink:0;width:70px;
+  font-size:8px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--red);padding-top:2px;
+}
+.cc-row-text{font-size:11px;color:rgba(0,0,0,.5);line-height:1.6;font-weight:400}
+
+/* ── KPIs inline ── */
+.cc-kpis{display:flex;gap:0;border-top:1px solid rgba(0,0,0,.07);margin-top:auto}
+.cc-kpi{
+  flex:1;padding:12px 14px;
+  border-right:1px solid rgba(0,0,0,.07);
+}
+.cc-kpi:last-child{border-right:none}
+.cc-kpi-n{font-family:var(--ff-display);font-size:18px;font-weight:800;color:#111;line-height:1}
+.cc-kpi-n em{color:var(--red);font-style:normal}
+.cc-kpi-l{font-size:9px;color:rgba(0,0,0,.35);letter-spacing:.8px;text-transform:uppercase;margin-top:3px}
+
+/* ── CTA ── */
+.cc-cta{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;
+  border-top:1px solid rgba(0,0,0,.07);
+  background:rgba(0,0,0,.02);
+}
+.cc-cta-text{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--red)}
+.cc-cta-arrow{
+  width:28px;height:28px;border:1px solid rgba(200,16,46,.3);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s,border-color .15s;
+}
+.case-card:hover .cc-cta-arrow{background:var(--red);border-color:var(--red)}
+.cc-cta-arrow svg{width:12px;height:12px;stroke:var(--red);fill:none;stroke-width:2.5;transition:transform .15s,stroke .15s}
+.case-card:hover .cc-cta-arrow svg{transform:translateX(2px);stroke:#fff}
+
+/* ═══════════════════════════════════════════
+   TESTIMONIAL
+═══════════════════════════════════════════ */
+.testi-section{background:var(--red);padding:72px 40px}
+.testi-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:80px;align-items:center}
+.testi-quote-mark{
+  font-family:var(--ff-display);font-size:96px;color:rgba(255,255,255,.1);
+  line-height:.7;margin-bottom:16px;font-weight:800;
+}
+.testi-quote{
+  font-size:17px;color:#fff;line-height:1.75;margin-bottom:24px;
+  font-weight:300;font-style:italic;
+}
+.testi-author strong{display:block;color:#fff;font-size:13px;font-weight:700;margin-bottom:2px}
+.testi-author span{color:rgba(255,255,255,.5);font-size:12px}
+.testi-divider{width:32px;height:1.5px;background:rgba(255,255,255,.3);margin:16px 0}
+.testi-metrics{display:flex;flex-direction:column;gap:1px}
+.testi-metric{
+  background:var(--red-d);padding:20px 22px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.testi-metric:nth-child(even){background:rgba(0,0,0,.15)}
+.tm-n{font-family:var(--ff-display);font-size:22px;font-weight:800;color:#fff}
+.tm-l{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase}
+
+/* ═══════════════════════════════════════════
+   CTA FINAL
+═══════════════════════════════════════════ */
+.cta-section{
+  background:var(--ink);padding:80px 40px;
+  border-top:1px solid var(--border-d);
+  display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:center;
+}
+.cta-label{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--red-m);color:var(--red);
+  font-size:9px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  padding:5px 12px;border:1px solid rgba(200,16,46,.2);margin-bottom:20px;
+}
+.cta-title{
+  font-family:var(--ff-display);font-size:clamp(28px,3.5vw,44px);
+  font-weight:800;color:#fff;line-height:1.05;letter-spacing:-1.5px;
+  margin-bottom:14px;
+}
+.cta-title em{color:var(--red);font-style:normal}
+.cta-desc{font-size:14px;color:rgba(255,255,255,.3);font-weight:300;line-height:1.7}
+.cta-cards{display:flex;flex-direction:column;gap:1px}
+.cta-card{
+  background:var(--ink3);padding:20px 22px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  cursor:pointer;transition:background .15s;
+  border-left:2px solid transparent;
+}
+.cta-card:hover{background:var(--ink4);border-left-color:var(--red)}
+.cta-card-info{}
+.cta-card-title{font-size:12px;font-weight:600;color:#fff;margin-bottom:2px}
+.cta-card-desc{font-size:11px;color:rgba(255,255,255,.28);font-weight:300}
+.cta-card-arr{
+  width:28px;height:28px;background:rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background .15s;
+}
+.cta-card:hover .cta-card-arr{background:var(--red)}
+.cta-card-arr svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer{background:#070707;padding:52px 40px 24px;border-top:1px solid rgba(255,255,255,.04)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:40px}
+.footer-brand{}
+.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.footer-desc{font-size:12px;color:rgba(255,255,255,.22);line-height:1.7;max-width:220px;font-weight:300}
+.footer-col h4{
+  font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.25);margin-bottom:16px;
+}
+.footer-col a{
+  display:block;font-size:12px;color:rgba(255,255,255,.3);
+  margin-bottom:10px;cursor:pointer;transition:color .13s;font-weight:300;
+}
+.footer-col a:hover{color:#fff}
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.05);padding-top:20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.footer-legal{font-size:11px;color:rgba(255,255,255,.14);font-weight:300}
+.footer-social{display:flex;gap:6px}
+.social-btn{
+  width:30px;height:30px;border:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.25);font-size:10px;font-weight:700;
+  cursor:pointer;transition:all .15s;font-family:var(--ff-display);
+}
+.social-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* ═══════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   WHY SLIDE LAYOUT
+═══════════════════════════════════════════ */
+.ts-why-layout{
+  position:absolute;inset:0;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;
+  padding:0 80px;
+  gap:60px;
+  z-index:2;
+}
+.ts-why-left{display:flex;flex-direction:column;align-items:flex-start}
+.ts-why-right{display:flex;flex-direction:column;gap:0}
+.ts-why-reason{
+  display:flex;align-items:flex-start;gap:20px;
+  padding:22px 0;border-bottom:1px solid rgba(255,255,255,.07);
+}
+.ts-why-reason:last-child{border-bottom:none}
+.ts-why-num{
+  font-family:var(--ff-display);font-size:32px;font-weight:700;
+  color:var(--red);letter-spacing:2px;flex-shrink:0;
+  margin-top:0;line-height:1;
+}
+.ts-why-text{
+  font-size:16px;color:rgba(255,255,255,.75);line-height:1.75;font-weight:300;
+}
+
+/* ═══════════════════════════════════════════
+   PARTNERSHIPS SECTION
+═══════════════════════════════════════════ */
+#partnerships{
+  background:var(--white);padding:64px 40px;
+  border-top:1px solid var(--stone3);
+}
+.partners-head{margin-bottom:44px}
+.partners-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--stone3);
+  border:1px solid var(--stone3);
+}
+.partner-cell{
+  background:var(--white);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:36px 32px;gap:12px;
+  transition:background .15s;cursor:default;
+  position:relative;overflow:hidden;
+}
+.partner-cell::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:2px;background:transparent;transition:background .2s;
+}
+.partner-cell:hover{background:var(--stone)}
+.partner-cell:hover::after{background:var(--red)}
+.partner-logo{
+  font-family:var(--ff-display);font-weight:800;font-size:24px;
+  letter-spacing:-1px;color:var(--ink);
+  display:flex;align-items:center;gap:6px;
+}
+.partner-logo .logo-accent{color:var(--red)}
+.partner-badge{
+  font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--stone3);padding:3px 10px;
+}
+/* SAP specific */
+.partner-sap .partner-logo{color:#1870c3}
+.partner-oracle .partner-logo{color:#C74634}
+.partner-ibm .partner-logo{color:#1F70C1}
+.partner-varicent .partner-logo{color:var(--ink)}
+
+/* ═══════════════════════════════════════════
+   PILLARS + STATS SECTION (Image 3)
+═══════════════════════════════════════════ */
+#pillars{background:var(--red);padding:64px 40px}
+.pillars-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:32px;
+  margin-bottom:0;
+}
+.pillar-item{text-align:center}
+.pillar-icon{
+  width:52px;height:52px;margin:0 auto 20px;
+  border:1.5px solid rgba(255,255,255,.35);
+  display:flex;align-items:center;justify-content:center;
+}
+.pillar-icon svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.5}
+.pillar-title{
+  font-size:15px;font-weight:800;color:#fff;
+  line-height:1.25;margin-bottom:12px;
+}
+.pillar-text{
+  font-size:12px;color:rgba(255,255,255,.65);
+  line-height:1.75;font-weight:300;
+}
+
+#stats-band{background:var(--ink2);padding:60px 40px}
+.stats-row{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:rgba(255,255,255,.05);
+}
+.stat-cell{
+  background:var(--ink2);padding:36px 32px;
+  display:flex;flex-direction:column;gap:6px;
+  border-bottom:2px solid transparent;transition:border-color .2s;
+}
+.stat-cell:hover{border-bottom-color:var(--red)}
+.stat-n{
+  font-family:var(--ff-display);font-size:52px;font-weight:800;
+  color:#fff;line-height:1;letter-spacing:-2px;
+}
+.stat-n em{color:var(--red);font-style:normal}
+.stat-l{font-size:12px;color:rgba(255,255,255,.35);font-weight:300;line-height:1.5;max-width:180px}
+
+/* ═══════════════════════════════════════════
+   LEY DE FITTS — touch targets mínimos 44px
+═══════════════════════════════════════════ */
+.filter-btn{min-height:44px;padding:12px 20px}
+.nav-cta{min-height:40px}
+
+/* ═══════════════════════════════════════════
+   WCAG — FOCUS VISIBLE
+═══════════════════════════════════════════ */
+:focus-visible{
+  outline:2px solid var(--red);
+  outline-offset:3px;
+}
+.section.dark :focus-visible,.ia-section :focus-visible,
+#hero :focus-visible,nav :focus-visible{
+  outline-color:#fff;
+}
+
+/* ═══════════════════════════════════════════
+   SKIP TO CONTENT — accesibilidad
+═══════════════════════════════════════════ */
+.skip-link{
+  position:absolute;top:-100%;left:8px;z-index:9999;
+  background:var(--red);color:#fff;padding:8px 18px;
+  font-size:12px;font-weight:700;letter-spacing:.5px;
+  text-decoration:none;transition:top .15s;
+}
+.skip-link:focus{top:8px}
+
+/* ═══════════════════════════════════════════
+   RESULT COUNTER — H1 Visibilidad del sistema
+═══════════════════════════════════════════ */
+.cases-counter{
+  font-size:11px;color:var(--muted);
+  margin-bottom:16px;font-weight:500;
+  display:flex;align-items:center;gap:6px;
+}
+.cases-counter em{color:var(--red);font-style:normal;font-weight:700}
+.cases-counter::before{
+  content:'';width:4px;height:4px;
+  background:var(--red);border-radius:50%;display:inline-block;
+}
+
+/* ═══════════════════════════════════════════
+   EMPTY STATE — H5/H9 Prevención y recuperación de errores
+═══════════════════════════════════════════ */
+.cases-empty{
+  grid-column:span 3;padding:64px 20px;
+  text-align:center;display:none;
+}
+.cases-empty.show{display:block}
+.cases-empty-icon{
+  width:48px;height:48px;margin:0 auto 16px;
+  border:1.5px solid var(--border);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.cases-empty-icon svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:1.5}
+.cases-empty-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.cases-empty-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+.cases-empty-reset{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--red);color:#fff;
+  padding:10px 20px;font-size:11px;font-weight:700;
+  letter-spacing:.6px;text-transform:uppercase;border:none;cursor:pointer;
+  font-family:var(--ff-body);
+}
+
+/* ═══════════════════════════════════════════
+   BACK TO TOP — H3 Control y libertad
+═══════════════════════════════════════════ */
+#back-top{
+  position:fixed;bottom:32px;right:32px;z-index:400;
+  width:44px;height:44px;
+  background:rgba(10,10,10,.9);
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;opacity:0;pointer-events:none;
+  transition:opacity .22s,transform .22s,background .15s;
+  transform:translateY(8px);
+}
+#back-top.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+#back-top:hover{background:var(--red);border-color:var(--red)}
+#back-top svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5}
+
+/* ═══════════════════════════════════════════
+   TOAST FEEDBACK — H1 Visibilidad / confirmación de acción
+═══════════════════════════════════════════ */
+#toast{
+  position:fixed;bottom:28px;left:50%;
+  transform:translateX(-50%) translateY(12px);
+  z-index:9000;
+  background:var(--ink2);color:#fff;
+  padding:11px 20px;
+  border-left:3px solid var(--red);
+  font-size:12px;font-weight:600;letter-spacing:.2px;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s var(--ease-out),transform .25s var(--ease-out);
+  white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* case-card fade on filter */
+.case-card{opacity:1;transition:transform .22s var(--ease-out),box-shadow .22s var(--ease-out),border-color .22s,opacity .18s}
+.case-card.hidden{opacity:0}
+
+</style>
+</head>
+<body>
+
+<!-- SKIP TO CONTENT -->
+<a href="#hero" class="skip-link">Saltar al contenido principal</a>
+
+<!-- BACK TO TOP -->
+<button id="back-top" aria-label="Volver al inicio de la página">
+  <svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<!-- TOAST FEEDBACK -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- SCROLL PROGRESS -->
+<div id="progress"></div>
+
+<!-- NAV -->
+<nav id="nav" role="navigation" aria-label="Navegación principal">
+  <div class="nav-logo" onclick="closePage()" style="cursor:pointer">
+    <img class="logo-mark" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAABzCAMAAAAVDM/RAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAALoUExURQAAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAP///4jjkKoAAAD2dFJOUwAFBgMCCREZJTI4QkMnCgEEGoSOj52hTQ5ukKzF2ePq7vX26+TaxrCSb0gmDxd0DG11EjDteggiU4a7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" alt="TGV" />
+    <span class="logo-text">Excelencia Informática</span>
+  </div>
+  <div class="nav-links" role="menubar">
+    <div class="nl act" role="menuitem" tabindex="0" onclick="closePage();scrollTo({top:0,behavior:'smooth'})">Inicio</div>
+
+    <!-- SERVICIOS DROPDOWN -->
+    <div class="nl-drop">
+      <div class="nl" role="menuitem" tabindex="0" onclick="openPage('servicios-page')">
+        Servicios
+        <svg class="caret" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="dropdown">
+        <div class="dd-item" onclick="openPage('servicios-page');go('sap-anchor')"><span class="dd-dot"></span>Consultoría SAP</div>
+        <div class="dd-item" onclick="openPage('servicios-page');go('jde-anchor')"><span class="dd-dot"></span>Oracle JD Edwards</div>
+        <div class="dd-item" onclick="openPage('servicios-page');go('ia-anchor')"><span class="dd-dot"></span>IA Empresarial</div>
+        <div class="dd-item" onclick="openPage('servicios-page');go('dev-anchor')"><span class="dd-dot"></span>Desarrollo de Aplicaciones</div>
+        <div class="dd-item" onclick="openPage('servicios-page');go('fin-anchor')"><span class="dd-dot"></span>Industria Financiera</div>
+        <div class="dd-item" onclick="openPage('servicios-page');go('bva-anchor')"><span class="dd-dot"></span>Business Value Assessment</div>
+      </div>
+    </div>
+
+    <!-- NOSOTROS DROPDOWN -->
+    <div class="nl-drop">
+      <div class="nl" role="menuitem" tabindex="0" onclick="openPage('nosotros-page')">
+        Nosotros
+        <svg class="caret" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="dropdown">
+        <div class="dd-item" onclick="openPage('nosotros-page')"><span class="dd-dot"></span>Nuestro equipo</div>
+        <div class="dd-item" onclick="openPage('nosotros-page')"><span class="dd-dot"></span>Nuestra historia</div>
+        <div class="dd-item" onclick="openPage('nosotros-page')"><span class="dd-dot"></span>Alianzas y certificaciones</div>
+        <div class="dd-item" onclick="openPage('nosotros-page')"><span class="dd-dot"></span>Nuestra visión</div>
+      </div>
+    </div>
+
+    <div class="nl" role="menuitem" tabindex="0" onclick="openPage('casos-page')">Casos de éxito</div>
+    <div class="nl" role="menuitem" tabindex="0" onclick="window.open('https://www.linkedin.com/company/tgv/jobs/','_blank')">Sumate</div>
+    <div class="nl" role="menuitem" tabindex="0" onclick="openPage('tendencias-page')">Tendencias</div>
+    <div class="nl" role="menuitem" tabindex="0" onclick="openPage('contacto-page')">Contactanos</div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-pill" onclick="openPage('contacto-page')">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Argentina · México · EE.UU · España
+    </div>
+    <button class="nav-cta" onclick="sendPrompt('Quiero iniciar un diagnóstico SAP S/4HANA gratuito con TGV')">Diagnóstico gratis</button>
+  </div>
+</nav>
+
+<!-- ══ PAGE OVERLAY ══ -->
+<div id="page-overlay" role="dialog" aria-modal="true" aria-label="Página de contenido"></div>
+
+<!-- HERO -->
+<section id="hero" aria-label="Inicio — propuesta de valor TGV">
+  <div class="hero-bg-img" aria-hidden="true"></div>
+  <div class="hero-bg-grid" aria-hidden="true"></div>
+  <div class="hero-bg-glow" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow" aria-label="Más de 30 años de experiencia">Más de 30 años de experiencia</div>
+    <h1>
+      Transformamos<br>tecnología en
+      <em>resultados reales</em>
+    </h1>
+    <p class="hero-sub">SAP, Oracle JDE, IA empresarial y desarrollo a medida. Proyectos ejecutados en más de 16 países con presencia regional nearshore e in-house.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="go('servicios')">
+        Ver soluciones
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <button class="btn-outline" onclick="go('casos')">Casos de éxito</button>
+    </div>
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <div class="scroll-line"></div>
+      Scroll para explorar
+    </div>
+  </div>
+
+
+</section>
+
+<!-- PARTNERS MARQUEE -->
+<div id="partners" aria-label="Partners certificados" role="complementary">
+  <div class="marquee-track" aria-hidden="true">
+    <span class="marquee-item">SAP Partner</span>
+    <span class="marquee-item">Oracle JD Edwards</span>
+    <span class="marquee-item">IBM Gold Partner</span>
+    <span class="marquee-item">Microsoft Partner</span>
+    <span class="marquee-item">UiPath Certified</span>
+    <span class="marquee-item">Automation Anywhere</span>
+    <span class="marquee-item">Power Platform</span>
+    <span class="marquee-item">Azure AI Services</span>
+    <!-- duplicate for seamless loop -->
+    <span class="marquee-item">SAP Partner</span>
+    <span class="marquee-item">Oracle JD Edwards</span>
+    <span class="marquee-item">IBM Gold Partner</span>
+    <span class="marquee-item">Microsoft Partner</span>
+    <span class="marquee-item">UiPath Certified</span>
+    <span class="marquee-item">Automation Anywhere</span>
+    <span class="marquee-item">Power Platform</span>
+    <span class="marquee-item">Azure AI Services</span>
+  </div>
+</div>
+
+<!-- ══ TEAM SLIDER ══ -->
+<div id="team-slider" role="region" aria-label="TGV — Equipo y cultura">
+  <div class="ts-track" id="ts-track"></div>
+  <button class="ts-arrow ts-prev" onclick="tsMove(-1)" aria-label="Slide anterior">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="ts-arrow ts-next" onclick="tsMove(1)" aria-label="Slide siguiente">
+    <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+  <div class="ts-dots" id="ts-dots" aria-hidden="true"></div>
+  <div class="ts-counter" id="ts-counter" aria-hidden="true"></div>
+</div>
+
+<!-- ══ SERVICIOS ══ -->
+<div id="servicios" role="region" aria-label="Soluciones tecnológicas">
+  <div class="svc-header">
+    <div class="svc-header-left">
+      <div class="eyebrow">Qué hacemos</div>
+      <div class="sec-title">Soluciones tecnológicas end-to-end</div>
+      <p class="sec-sub">Seleccioná una solución para explorar stack, metodología y casos de éxito reales.</p>
+    </div>
+    <div class="svc-tabs" role="tablist">
+      <button class="svc-tab act" role="tab" aria-selected="true">Todos los servicios</button>
+      <button class="svc-tab" role="tab" aria-selected="false" onclick="sendPrompt('¿Cuál de los servicios de TGV es más adecuado para mi empresa?')">Ayudame a elegir ↗</button>
+    </div>
+  </div>
+
+  <div class="svc-body">
+    <div class="svc-sidebar" role="navigation" aria-label="Servicios">
+      <div class="svc-sidebar-label">Servicios</div>
+      <div id="svc-list" role="tablist"></div>
+      <div class="svc-sidebar-cta">
+        <button class="btn-sidebar-cta" onclick="sendPrompt('Necesito un diagnóstico gratuito de SAP S/4HANA para mi empresa')">Diagnóstico S/4HANA gratis ↗</button>
+      </div>
+    </div>
+    <div class="svc-panel-wrap" id="svc-panels" role="tabpanel"></div>
+  </div>
+</div>
+
+<!-- COMPARE BAR -->
+<div id="cmpbar" role="complementary" aria-label="Comparador de servicios">
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <span class="cmp-label">Comparando</span>
+    <div class="cmp-chips" id="cmp-chips"></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span style="font-size:10px;color:rgba(255,255,255,.2)">Hasta 3 servicios</span>
+    <button class="btn-cmp" id="cmp-go">Ver comparación completa ↗</button>
+  </div>
+</div>
+
+<!-- ══ PARTNERSHIPS ══ -->
+<section id="partnerships" aria-label="Partners y tecnologías">
+  <div class="partners-head">
+    <div class="eyebrow">Alianzas estratégicas</div>
+    <div class="sec-title">Partnership + tecnologías</div>
+    <p class="sec-sub">Partnerships certificados con los líderes globales de tecnología empresarial.</p>
+  </div>
+  <div class="partners-grid" role="list">
+    <div class="partner-cell partner-sap" role="listitem">
+      <div class="partner-logo">
+        <svg width="56" height="28" viewBox="0 0 56 28" fill="none"><rect width="56" height="28" rx="3" fill="#1870C3"/><text x="8" y="21" font-family="Arial" font-weight="900" font-size="18" fill="white">SAP</text></svg>
+      </div>
+      <div class="partner-badge">Partner</div>
+    </div>
+    <div class="partner-cell partner-oracle" role="listitem">
+      <div class="partner-logo">
+        <span style="font-family:Arial;font-weight:700;font-size:22px;color:#C74634;letter-spacing:-0.5px">ORACLE</span>
+      </div>
+      <div class="partner-badge">Partner</div>
+    </div>
+    <div class="partner-cell partner-ibm" role="listitem">
+      <div class="partner-logo">
+        <svg width="52" height="20" viewBox="0 0 52 20" fill="none"><rect width="52" height="20" rx="2" fill="#1F70C1"/><text x="6" y="15" font-family="Arial" font-weight="900" font-size="13" fill="white">IBM</text></svg>
+      </div>
+      <div class="partner-badge">Business Partner</div>
+    </div>
+    <div class="partner-cell partner-varicent" role="listitem">
+      <div class="partner-logo">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="margin-right:8px"><circle cx="5" cy="5" r="3" fill="#5B50A0"/><circle cx="13" cy="5" r="3" fill="#7B70C0"/><circle cx="5" cy="13" r="3" fill="#9B90D0"/><circle cx="13" cy="13" r="3" fill="#B0A8E0"/></svg>
+        <span style="font-family:Arial;font-weight:700;font-size:20px;letter-spacing:-0.5px">Varicent</span>
+      </div>
+      <div class="partner-badge">Partner</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PILLARS ══ -->
+<section id="pillars" aria-label="Nuestros pilares">
+  <div class="pillars-grid" role="list">
+    <div class="pillar-item" role="listitem">
+      <div class="pillar-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <div class="pillar-title">Desarrollo<br>a medida</div>
+      <p class="pillar-text">Nuestra capacidad de desarrollar software a medida sumado al conocimiento de paquetes world class, nos ha permitido integrar sistemas de múltiple envergadura y diferentes plataformas tecnológicas.</p>
+    </div>
+    <div class="pillar-item" role="listitem">
+      <div class="pillar-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="pillar-title">Confianza en<br>nuestro trabajo</div>
+      <p class="pillar-text">Contamos con un equipo calificado y multidisciplinario, lo que nos permite establecer relaciones duraderas con nuestros clientes. Trabajamos para atender las necesidades de cada negocio.</p>
+    </div>
+    <div class="pillar-item" role="listitem">
+      <div class="pillar-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+      </div>
+      <div class="pillar-title">Presencia<br>internacional</div>
+      <p class="pillar-text">Desarrollamos proyectos en más de 16 países, con empresas y organismos gubernamentales. Trabajamos tanto en la modalidad nearshore como en las oficinas de nuestros clientes.</p>
+    </div>
+    <div class="pillar-item" role="listitem">
+      <div class="pillar-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      </div>
+      <div class="pillar-title">Satisfacción de<br>nuestros clientes</div>
+      <p class="pillar-text">Ofrecemos el conocimiento y dominio de las tecnologías, acompañando a nuestros clientes en la adopción de la solución digital oportuna y adecuada para cada negocio, sector y cultura.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATS BAND ══ -->
+<div id="stats-band" aria-label="Métricas TGV">
+  <div class="stats-row" role="list">
+    <div class="stat-cell" role="listitem">
+      <div class="stat-n"><em>+80</em></div>
+      <div class="stat-l">clientes en 16 países</div>
+    </div>
+    <div class="stat-cell" role="listitem">
+      <div class="stat-n"><em>6</em></div>
+      <div class="stat-l">de las 10 compañías de alimentos más grandes del mundo</div>
+    </div>
+    <div class="stat-cell" role="listitem">
+      <div class="stat-n"><em>3</em></div>
+      <div class="stat-l">de las instituciones financieras líderes del mundo</div>
+    </div>
+    <div class="stat-cell" role="listitem">
+      <div class="stat-n"><em>+300</em></div>
+      <div class="stat-l">profesionales forman parte de nuestro equipo</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WHY TGV ══ -->
+<section id="why" class="section dark" aria-label="Por qué elegir TGV">
+  <div class="why-layout">
+    <div class="why-text">
+      <div class="eyebrow">Por qué TGV</div>
+      <div class="sec-title light">Tres décadas<br>transformando negocios</div>
+      <p class="sec-sub light">Proyectos en más de 16 países con flexibilidad nearshore y presencia in-house. Metodología probada, equipo multidisciplinario y satisfacción garantizada.</p>
+      <div class="why-counters" aria-label="Métricas de experiencia">
+        <div class="why-counter">
+          <div class="wc-n">30+</div>
+          <div class="wc-info">
+            <div class="wc-title">Años de experiencia</div>
+            <div class="wc-desc">Desde 1993 transformando empresas líderes en Latinoamérica y el mundo</div>
+          </div>
+        </div>
+        <div class="why-counter">
+          <div class="wc-n">16+</div>
+          <div class="wc-info">
+            <div class="wc-title">Países ejecutados</div>
+            <div class="wc-desc">Argentina, México, EE.UU., España y toda Latinoamérica con equipos locales</div>
+          </div>
+        </div>
+        <div class="why-counter">
+          <div class="wc-n">100%</div>
+          <div class="wc-info">
+            <div class="wc-title">Go-lives exitosos</div>
+            <div class="wc-desc">Metodología de delivery con cero go-lives fallidos en proyectos SAP S/4HANA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="why-boxes" role="list">
+      <div class="why-box" role="listitem">
+        <div class="why-box-num">01</div>
+        <div class="why-box-title">Expertise deep en ERP</div>
+        <p class="why-box-p">Consultores certificados SAP y Oracle JDE. No somos generalistas: entendemos los módulos, las industrias y las integraciones.</p>
+        <div class="why-box-bar" aria-hidden="true"></div>
+      </div>
+      <div class="why-box" role="listitem">
+        <div class="why-box-num">02</div>
+        <div class="why-box-title">Equipo multidisciplinario</div>
+        <p class="why-box-p">Perfil técnico + funcional + negocio. Nos integramos al equipo del cliente y hablamos en su idioma desde el día 1.</p>
+        <div class="why-box-bar" aria-hidden="true"></div>
+      </div>
+      <div class="why-box" role="listitem">
+        <div class="why-box-num">03</div>
+        <div class="why-box-title">Presencia internacional</div>
+        <p class="why-box-p">Modalidad nearshore o in-house según el proyecto. Equipos en Argentina, México, EE.UU. y España con coordinación regional.</p>
+        <div class="why-box-bar" aria-hidden="true"></div>
+      </div>
+      <div class="why-box" role="listitem">
+        <div class="why-box-num">04</div>
+        <div class="why-box-title">Certificación CMMI L3</div>
+        <p class="why-box-p">Procesos de desarrollo bajo estándares internacionales. Predictibilidad, calidad medible y mejora continua en cada entrega.</p>
+        <div class="why-box-bar" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ERP SECTION ══ -->
+<section id="erp" class="section grey" aria-label="ERPs world-class">
+  <div class="sec-head">
+    <div class="eyebrow">Plataformas ERP</div>
+    <div class="sec-title">ERPs world-class,<br>delivery local</div>
+    <p class="sec-sub">Las dos plataformas ERP más implementadas en industria y finanzas, con el respaldo de TGV y +30 años de experiencia en ambas.</p>
+  </div>
+  <div class="erp-grid" role="list">
+    <div class="erp-card" role="listitem" onclick="activateSvc('sap');go('servicios')" aria-label="Ver más sobre Consultoría SAP">
+      <div class="erp-card-accent"></div>
+      <div class="erp-card-logo">SAP <span>S/4HANA</span></div>
+      <div class="erp-card-sub">ERP · Cloud · Integración · Joule AI</div>
+      <p class="erp-card-desc">Desde estrategia hasta go-live. Consultores certificados en toda la cadena de valor SAP: módulos funcionales, plataforma técnica, ABAP e integración cloud con BTP y CPI.</p>
+      <div class="erp-features">
+        <div class="erp-feature">Migración S/4HANA en 16+ países</div>
+        <div class="erp-feature">Integración de 40+ sistemas heterogéneos</div>
+        <div class="erp-feature">100% go-lives exitosos</div>
+        <div class="erp-feature">Joule AI & SAP BTP nativos</div>
+      </div>
+      <div class="erp-card-link">
+        Ver consultoría SAP
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+    <div class="erp-card" role="listitem" onclick="activateSvc('jde');go('servicios')" aria-label="Ver más sobre Oracle JD Edwards">
+      <div class="erp-card-accent"></div>
+      <div class="erp-card-logo">Oracle <span>JD Edwards</span></div>
+      <div class="erp-card-sub">ERP · Manufactura · Distribución · Finanzas</div>
+      <p class="erp-card-desc">EnterpriseOne y World con foco en manufactura, distribución y finanzas. Orchestrator, BI Publisher y One Pages para máxima eficiencia operativa en LATAM.</p>
+      <div class="erp-features">
+        <div class="erp-feature">Operación unificada en 8 países bajo 1 ERP</div>
+        <div class="erp-feature">Orchestrator para automatización end-to-end</div>
+        <div class="erp-feature">Portal B2B con stock y precios en tiempo real</div>
+        <div class="erp-feature">BI Publisher y dashboards ejecutivos</div>
+      </div>
+      <div class="erp-card-link">
+        Ver consultoría JDE
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ IA & AUTOMATIZACIÓN ══ -->
+<section class="ia-section" aria-label="IA empresarial y automatización">
+  <div class="ia-layout">
+    <div class="ia-text">
+      <div class="eyebrow" style="color:var(--red)">IA & Automatización</div>
+      <div class="sec-title light">Inteligencia artificial<br>para el negocio real</div>
+      <p class="sec-sub light">RPA, IA generativa y Process Mining integrados a tus sistemas core. No prometemos futuro: entregamos automatización funcionando en producción.</p>
+      <div class="ia-stack" aria-label="Stack de automatización">
+        <div class="ia-row">
+          <span class="ia-row-label">RPA Platforms</span>
+          <div class="ia-row-tags">
+            <span class="ia-pill">UiPath</span>
+            <span class="ia-pill">Power Automate</span>
+            <span class="ia-pill">Automation Anywhere</span>
+          </div>
+        </div>
+        <div class="ia-row">
+          <span class="ia-row-label">IA Generativa</span>
+          <div class="ia-row-tags">
+            <span class="ia-pill">Azure AI</span>
+            <span class="ia-pill">Copilot Studio</span>
+            <span class="ia-pill">AI Builder</span>
+          </div>
+        </div>
+        <div class="ia-row">
+          <span class="ia-row-label">Analytics</span>
+          <div class="ia-row-tags">
+            <span class="ia-pill">Power BI</span>
+            <span class="ia-pill">Process Mining</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-primary" style="margin-top:28px" onclick="activateSvc('ia');go('servicios')">
+        Explorar IA Empresarial
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="ia-visual">
+      <div class="ia-stats-grid" role="list">
+        <div class="ia-stat" role="listitem">
+          <div class="ia-stat-n"><em>100%</em></div>
+          <div class="ia-stat-l">Ruteo automatizado Oil & Gas</div>
+        </div>
+        <div class="ia-stat" role="listitem">
+          <div class="ia-stat-n"><em>78%</em></div>
+          <div class="ia-stat-l">Resolución automática chatbot</div>
+        </div>
+        <div class="ia-stat" role="listitem">
+          <div class="ia-stat-n"><em>10K<sup style="font-size:16px">+</sup></em></div>
+          <div class="ia-stat-l">Facturas procesadas/mes sin intervención</div>
+        </div>
+        <div class="ia-stat" role="listitem">
+          <div class="ia-stat-n"><em>-45%</em></div>
+          <div class="ia-stat-l">Tiempo operativo fondos inversión</div>
+        </div>
+        <div class="ia-cta-row" role="listitem">
+          <div>
+            <div class="ia-cta-text">¿Qué proceso podría automatizarse?</div>
+            <div class="ia-cta-text" style="font-size:11px"><span>Encontremos oportunidades en tu empresa</span></div>
+          </div>
+          <button class="btn-ia-cta" onclick="sendPrompt('Quiero identificar oportunidades de automatización con IA en mi empresa')">Identificar oportunidades</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CASOS ══ -->
+<section id="casos" class="section" style="background:#fff" aria-label="Casos de éxito">
+  <div class="sec-head">
+    <div class="eyebrow" style="color:var(--red)">Casos de éxito</div>
+    <div class="sec-title" style="color:#111">Impacto real en<br>industrias líderes</div>
+    <p class="sec-sub" style="color:rgba(0,0,0,.45)">Resultados medibles en cada proyecto. Filtrá por área para encontrar el caso más relevante para tu negocio.</p>
+  </div>
+  <div class="filter-row" role="group" aria-label="Filtros de casos" id="filter-row"></div>
+  <div class="cases-counter" id="cases-counter" aria-live="polite"></div>
+  <div class="cases-grid" id="cases-grid" role="list">
+    <div class="cases-empty" id="cases-empty">
+      <div class="cases-empty-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </div>
+      <div class="cases-empty-title">No hay casos para este filtro</div>
+      <div class="cases-empty-sub">Probá con otra categoría o explorá todos los proyectos.</div>
+      <button class="cases-empty-reset" onclick="document.querySelector('.filter-btn[data-cat=all]').click()">Ver todos los casos</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIAL ══ -->
+<section class="testi-section" aria-label="Testimonio de cliente">
+  <div class="testi-layout">
+    <div>
+      <div class="testi-quote-mark" aria-hidden="true">"</div>
+      <blockquote class="testi-quote">"TGV nos ha permitido convertirnos en una alternativa ágil y viable. El impacto en nuestro departamento fue muy sólido, gracias a la voluntad y flexibilidad para proponer soluciones a nuestra medida."</blockquote>
+      <div class="testi-divider" aria-hidden="true"></div>
+      <div class="testi-author">
+        <strong>David Blaustein</strong>
+        <span>IT Region Manager, Latin America — Weatherford International</span>
+      </div>
+    </div>
+    <div class="testi-metrics" role="list">
+      <div class="testi-metric" role="listitem">
+        <div><div class="tm-n">4.000+</div><div class="tm-l">inspecciones/mes — DNM</div></div>
+      </div>
+      <div class="testi-metric" role="listitem">
+        <div><div class="tm-n">16+ países</div><div class="tm-l">clientes activos simultáneos</div></div>
+      </div>
+      <div class="testi-metric" role="listitem">
+        <div><div class="tm-n">CMMI L3</div><div class="tm-l">desarrollo certificado</div></div>
+      </div>
+      <div class="testi-metric" role="listitem">
+        <div><div class="tm-n">0 downtime</div><div class="tm-l">go-lives en migración bancaria</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA FINAL ══ -->
+<section class="cta-section" aria-label="Llamado a la acción">
+  <div>
+    <div class="cta-label">Próximo paso</div>
+    <div class="cta-title">¿Listo para el<br>próximo <em>proyecto</em>?</div>
+    <p class="cta-desc">Hablemos de tu negocio. En 30 minutos identificamos si hay oportunidades tecnológicas reales — sin compromiso.</p>
+  </div>
+  <div class="cta-cards" role="list">
+    <div class="cta-card" role="listitem" onclick="sendPrompt('Quiero iniciar un diagnóstico SAP S/4HANA gratuito con TGV')" tabindex="0" aria-label="Diagnóstico SAP S/4HANA gratuito">
+      <div class="cta-card-info">
+        <div class="cta-card-title">Diagnóstico SAP S/4HANA gratuito</div>
+        <div class="cta-card-desc">Evaluamos tu estado actual y roadmap de migración sin costo</div>
+      </div>
+      <div class="cta-card-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="cta-card" role="listitem" onclick="sendPrompt('Quiero hablar con un especialista TGV para iniciar un proyecto')" tabindex="0">
+      <div class="cta-card-info">
+        <div class="cta-card-title">Hablar con un especialista</div>
+        <div class="cta-card-desc">Consulta directa con consultores senior en SAP, JDE o IA</div>
+      </div>
+      <div class="cta-card-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="cta-card" role="listitem" onclick="sendPrompt('Quiero explorar oportunidades de trabajo en TGV')" tabindex="0">
+      <div class="cta-card-info">
+        <div class="cta-card-title">Sumate al equipo</div>
+        <div class="cta-card-desc">Posiciones abiertas para consultores, developers y especialistas</div>
+      </div>
+      <div class="cta-card-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer" role="contentinfo">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <img class="logo-mark" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAABzCAMAAAAVDM/RAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAALoUExURQAAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAOYAAP///4jjkKoAAAD2dFJOUwAFBgMCCREZJTI4QkMnCgEEGoSOj52hTQ5ukKzF2ePq7vX26+TaxrCSb0gmDxd0DG11EjDteggiU4a7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" alt="TGV" />
+        <span class="logo-text" style="font-size:11px">Excelencia Informática</span>
+      </div>
+      <p class="footer-desc">Más de 30 años transformando proyectos tecnológicos en soluciones reales. SAP, Oracle JDE, IA y desarrollo a medida.</p>
+    </div>
+    <nav class="footer-col" aria-label="Soluciones">
+      <h4>Soluciones</h4>
+      <a onclick="activateSvc('sap');go('servicios')">Consultoría SAP</a>
+      <a onclick="activateSvc('jde');go('servicios')">Oracle JD Edwards</a>
+      <a onclick="activateSvc('ia');go('servicios')">IA Empresarial</a>
+      <a onclick="activateSvc('dev');go('servicios')">Apps a medida</a>
+      <a onclick="activateSvc('fin');go('servicios')">Ind. Financiera</a>
+      <a onclick="activateSvc('bva');go('servicios')">BVA</a>
+    </nav>
+    <nav class="footer-col" aria-label="Compañía">
+      <h4>Compañía</h4>
+      <a onclick="go('why')">Nuestro equipo</a>
+      <a>Historia</a>
+      <a>Certificaciones</a>
+      <a>RSE</a>
+      <a>Sumate</a>
+    </nav>
+    <nav class="footer-col" aria-label="Regiones">
+      <h4>Regiones</h4>
+      <a>Argentina</a>
+      <a>México</a>
+      <a>Estados Unidos</a>
+      <a>España</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-legal">© 2026 TGV Excelencia en Soluciones Informáticas · Todos los derechos reservados</p>
+    <div class="footer-social" aria-label="Redes sociales">
+      <div class="social-btn" role="button" tabindex="0" aria-label="LinkedIn">in</div>
+      <div class="social-btn" role="button" tabindex="0" aria-label="Instagram">ig</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const svcs=[
+  {id:'sap',name:'Consultoría SAP',sub:'ERP · Cloud · Joule AI',badge:'S/4HANA · BTP · ABAP · Fiori',
+   url:'https://tgv.com.ar/consultoria-sap/',
+   title:'Consultoría SAP completa',
+   desc:'Desde estrategia hasta go-live. Consultores certificados en toda la cadena de valor SAP: módulos funcionales, plataforma técnica e integración cloud con BTP, CPI y Joule AI.',
+   techs:['S/4HANA','ECC','SAP BTP','CPI','ABAP','Fiori / UI5','Basis','Ariba','Joule AI','Seguridad SAP','HANA DB'],
+   cases:[
+    {tag:'Migración',name:'Migración a SAP S/4HANA — 16 países',desc:'Metodología probada en más de 16 países. Mínima disrupción operativa con plan de change management incluido desde el día 1. Cero go-lives fallidos.',kpis:[{n:'16<em>+</em>',l:'países ejecutado'},{n:'100%',l:'go-lives exitosos'}]},
+    {tag:'Integración',name:'CPI para empresa alimentaria global',desc:'40+ sistemas heterogéneos integrados con SAP CPI. Visibilidad end-to-end de la cadena de suministro global para empresa Top 10 en alimentos.',kpis:[{n:'40<em>+</em>',l:'sistemas integrados'},{n:'-70%',l:'errores de sincronización'}]},
+    {tag:'ABAP',name:'Optimización logística — picking',desc:'Desarrollo ABAP para automatizar despacho. Reducción del 60% en procesos manuales de picking y ruteo en planta en menos de 3 semanas.',kpis:[{n:'-60%',l:'procesos manuales'},{n:'3 sem',l:'tiempo de entrega'}]}
+   ]},
+  {id:'jde',name:'Oracle JD Edwards',sub:'Manufactura · Distribución',badge:'EnterpriseOne · World · Orchestrator',
+   url:'https://tgv.com.ar/oracle-jd-edwards/',
+   title:'Oracle JD Edwards end-to-end',
+   desc:'EnterpriseOne y World con foco en manufactura, distribución y finanzas. Orchestrator, BI Publisher y One Pages para máxima eficiencia operativa en toda Latinoamérica.',
+   techs:['EnterpriseOne 9.2','World A9.4','Orchestrator Framework','BI Publisher','One Pages / UDO','BSSV Web Services','Seguridad JDE','SQL Server','Oracle DB'],
+   cases:[
+    {tag:'Manufactura',name:'Unificación ERP en 8 países',desc:'Unificación de filiales de empresa manufacturera bajo un solo ERP JDE para toda Latinoamérica. Visibilidad consolidada en tiempo real.',kpis:[{n:'8',l:'países bajo 1 ERP'},{n:'-40%',l:'costos IT consolidados'}]},
+    {tag:'Finanzas',name:'Orchestrator para cuentas a pagar',desc:'Automatización de facturas mediante Orchestrator. Eliminación total de intervención manual en más de 10.000 documentos mensuales.',kpis:[{n:'10K<em>+</em>',l:'facturas/mes procesadas'},{n:'0',l:'intervención manual'}]},
+    {tag:'eCommerce',name:'Portal B2B sobre JDE',desc:'API REST sobre JDE para portal de clientes B2B con stock, precios y pedidos en tiempo real sin middleware adicional. +35% adopción en 60 días.',kpis:[{n:'Real-time',l:'stock y precios online'},{n:'+35%',l:'adopción del portal'}]}
+   ]},
+  {id:'ia',name:'IA Empresarial',sub:'RPA · IA Generativa · Process Mining',badge:'RPA · AI Builder · Process Mining · Copilot',
+   url:'https://tgv.com.ar/ia-empresarial/',
+   title:'Inteligencia artificial empresarial',
+   desc:'Automatizamos procesos con RPA e IA generativa. Power Automate, UiPath y Automation Anywhere integrados a tus sistemas core — SAP, JDE o legacy — sin fricciones y en producción.',
+   techs:['Power Automate','UiPath','Automation Anywhere','Azure AI Services','Copilot Studio','AI Builder','Power BI','Process Mining','Azure OpenAI'],
+   cases:[
+    {tag:'Oil & Gas',name:'Ruteo logístico con IA — combustible',desc:'Planificación automática de recorridos para despacho de combustible desde terminales distribuidas. Cero errores de asignación, operación 24/7.',kpis:[{n:'100%',l:'ruteo automatizado'},{n:'+30%',l:'eficiencia logística'}]},
+    {tag:'Finanzas',name:'IA para back-office de fondos',desc:'Automatización completa del back-office en gestión de activos. Reducción de costos con consistencia total en cada ciclo operativo nocturno.',kpis:[{n:'-45%',l:'tiempo operativo'},{n:'24/7',l:'procesamiento sin pausa'}]},
+    {tag:'Retail',name:'Agente conversacional — atención',desc:'Chatbot con IA generativa para atención al cliente. El 78% de consultas se resuelven sin intervención humana, reduciendo costo por contacto a la mitad.',kpis:[{n:'78%',l:'resolución automática'},{n:'-50%',l:'costo por contacto'}]}
+   ]},
+  {id:'dev',name:'Desarrollo de Apps',sub:'Full Stack · Mobile · APIs',badge:'Web · Mobile · Backend · REST APIs',
+   url:'https://tgv.com.ar/desarrollo-de-aplicaciones/',
+   title:'Aplicaciones a medida',
+   desc:'Desde MVPs hasta plataformas de misión crítica. Web, mobile y APIs con metodología ágil, código limpio y ownership completo del equipo TGV. CMMI L3 en cada entrega.',
+   techs:['Angular','React','Vue.js','Node.js','.NET 8','Java 21','Swift','Kotlin','SQL Server','Oracle DB','REST / SOAP APIs','Docker / K8s'],
+   cases:[
+    {tag:'Gobierno',name:'Control migratorio — DNM Argentina',desc:'Sistema crítico para 400+ dispositivos móviles en todo el país. Capacidad offline total con sincronización automática en tiempo real con la base central.',kpis:[{n:'400<em>+</em>',l:'dispositivos en campo'},{n:'4K/mes',l:'inspecciones procesadas'}]},
+    {tag:'Salud',name:'Plataforma de telemedicina',desc:'App para 200+ profesionales con videollamada, historia clínica digital y receta electrónica integrada a sistemas hospitalarios. 99.9% uptime.',kpis:[{n:'200<em>+</em>',l:'profesionales en plataforma'},{n:'99.9%',l:'uptime garantizado'}]},
+    {tag:'Banca',name:'Portal self-service bancario',desc:'Portal de autogestión para clientes bancarios. 45% menos llamadas a call center en los primeros 3 meses de operación en producción.',kpis:[{n:'-45%',l:'llamadas a call center'},{n:'3 meses',l:'ROI medido y comprobado'}]}
+   ]},
+  {id:'fin',name:'Industria Financiera',sub:'Banca · Seguros · Mainframe',badge:'Core Banking · COBOL · Microservicios · RPG',
+   url:'https://tgv.com.ar/industria-financiera/',
+   title:'Sistemas de alta transaccionalidad',
+   desc:'COBOL, RPG, Java y .NET para banca y seguros. Modernización gradual de mainframes con microservicios y analítica en tiempo real — sin downtime, sin riesgo.',
+   techs:['COBOL CICS','DB2','RPG / AS400','Java 21','Node.js','.NET 8','Power BI Embedded','REST APIs','Microservices','Strangler Fig Pattern'],
+   cases:[
+    {tag:'Banca',name:'Modernización core bancario',desc:'Migración gradual COBOL → microservicios Java con arquitectura strangler fig. Sin downtime para institución líder en Argentina. +60% velocidad de transacción.',kpis:[{n:'0 hs',l:'downtime total en migración'},{n:'+60%',l:'velocidad de transacción'}]},
+    {tag:'Seguros',name:'Portal de liquidación digital',desc:'Digitalización completa de siniestros. Tiempo de liquidación reducido de 15 días a 48 horas con trazabilidad end-to-end.',kpis:[{n:'15d→48h',l:'tiempo de liquidación'},{n:'-70%',l:'costo operativo total'}]},
+    {tag:'Inversión',name:'IA para gestión de activos',desc:'Automatización de back-office para fondo Top 5 en Argentina. Procesamiento nocturno sin intervención humana. Consistencia en cada ciclo.',kpis:[{n:'Top 5',l:'fondo Argentina referente'},{n:'24/7',l:'procesamiento automático'}]}
+   ]},
+  {id:'bva',name:'Business Value Assessment',sub:'Estrategia · Gobierno IT · Roadmap',badge:'Estrategia · Arquitectura · CMMI · Gobierno',
+   url:'https://tgv.com.ar/business-value-assessment/',
+   title:'Business Value Assessment',
+   desc:'Antes de ejecutar, entendemos. Alineamos tecnología con objetivos de negocio: estrategia, gobierno IT, madurez organizacional y selección de software. Decisiones basadas en datos reales.',
+   techs:['Enterprise Architecture','IT Governance','Digital Roadmap','Selección de ERP','Análisis ROI / TCO','Change Management','Benchmarking','CMMI Assessment'],
+   cases:[
+    {tag:'Retail',name:'Roadmap digital 3 años',desc:'12 iniciativas priorizadas con ROI proyectado por cada una. Hoja de ruta ejecutada al 100% en tiempo y presupuesto acordados con el directorio.',kpis:[{n:'12',l:'iniciativas priorizadas'},{n:'100%',l:'en tiempo y presupuesto'}]},
+    {tag:'Manufactura',name:'Selección ERP Latam',desc:'Evaluación comparativa SAP vs Oracle JDE vs Dynamics 365 para empresa con 5 filiales en Latinoamérica. Decisión objetiva con metodología propia.',kpis:[{n:'3 ERPs',l:'evaluados con criterio'},{n:'5 países',l:'alcance de evaluación'}]},
+    {tag:'Gobierno',name:'Madurez IT municipal',desc:'Assessment completo y plan de mejora para municipio de 1M+ habitantes. Certificación CMMI L3 obtenida al cierre del proceso.',kpis:[{n:'1M<em>+</em>',l:'habitantes impactados'},{n:'CMMI L3',l:'certificación obtenida'}]}
+   ]}
+];
+
+const casesData=[
+  {
+    tag:'Oracle JDE',cat:'jde',
+    t:'Orchestrator para Nutrien — 10K facturas/mes',
+    img:'https://tgv.com.ar/wp-content/uploads/2024/06/nutrien-caso-exito.jpg',
+    imgFallback:'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=900&q=80',
+    need:'Nutrien necesitaba eliminar la intervención manual en el procesamiento de miles de documentos de compra y facturas entrantes en su operación agroindustrial latinoamericana.',
+    solution:'TGV implementó Orchestrator Framework sobre Oracle JDE para automatizar end-to-end el flujo de facturas, integrando OCR, validación y conciliación contable sin código custom.',
+    kpis:[{n:'10K+',l:'facturas/mes'},{n:'0',l:'intervención manual'},{n:'<2h',l:'tiempo ciclo'}],
+    url:'https://tgv.com.ar/caso-de-exito-oracle-nutrien/'
+  },
+  {
+    tag:'Oil & Gas',cat:'ia',
+    t:'Ruteo logístico con IA — despacho de combustible',
+    img:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=900&q=80',
+    imgFallback:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=900&q=80',
+    need:'Una distribuidora de combustible necesitaba optimizar la planificación de rutas de despacho para reducir costos operativos y cumplir ventanas horarias con flotas heterogéneas.',
+    solution:'TGV desarrolló un motor de ruteo basado en IA con algoritmos genéticos y restricciones de carga, integrado con el ERP existente. Operación 100% automatizada, 24/7.',
+    kpis:[{n:'100%',l:'automatizado'},{n:'-38%',l:'costo combustible'},{n:'24/7',l:'operación'}],
+    url:'https://tgv.com.ar/casos-de-exito/'
+  },
+  {
+    tag:'Finanzas',cat:'ia',
+    t:'IA para back-office de fondos de inversión',
+    img:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80',
+    imgFallback:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80',
+    need:'Un top-5 fondo de inversión argentino arrastraba procesos manuales en conciliación de carteras, reporting regulatorio y generación de informes para inversores.',
+    solution:'TGV implementó agentes de IA con procesamiento de lenguaje natural y RPA para automatizar flujos de back-office, con trazabilidad completa y auditoría integrada.',
+    kpis:[{n:'-45%',l:'tiempo operativo'},{n:'99.9%',l:'precisión'},{n:'3x',l:'velocidad reporting'}],
+    url:'https://tgv.com.ar/casos-de-exito/'
+  },
+  {
+    tag:'Gobierno',cat:'dev',
+    t:'Control migratorio — Dirección Nacional de Migraciones',
+    img:'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=900&q=80',
+    imgFallback:'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=900&q=80',
+    need:'La DNM requería modernizar 400+ puestos de control en aeropuertos y pasos fronterizos con capacidad offline total y sincronización segura con los sistemas centrales.',
+    solution:'TGV diseñó y desplegó una arquitectura de aplicación nativa con sincronización diferida, lectores de documentos biométricos y dashboards de operaciones en tiempo real.',
+    kpis:[{n:'400+',l:'dispositivos'},{n:'4.000+',l:'inspecciones/mes'},{n:'100%',l:'offline-ready'}],
+    url:'https://tgv.com.ar/casos-de-exito/'
+  },
+  {
+    tag:'SAP',cat:'sap',
+    t:'Migración SAP S/4HANA — multipaís',
+    img:'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=900&q=80',
+    imgFallback:'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=900&q=80',
+    need:'Una multinacional con operaciones en 16+ países necesitaba migrar desde SAP ECC 6 hacia S/4HANA con go-live simultáneo en múltiples geografías sin impactar la operación.',
+    solution:'TGV aplicó metodología Activate adaptada con squads por región, gobierno centralizado y pruebas de regresión automatizadas. Certificación SAP Quality Awards en cada go-live.',
+    kpis:[{n:'16+',l:'países'},{n:'100%',l:'go-lives exitosos'},{n:'0',l:'rollbacks'}],
+    url:'https://tgv.com.ar/casos-de-exito/'
+  },
+  {
+    tag:'Banca',cat:'fin',
+    t:'Modernización core bancario — COBOL a microservicios',
+    img:'https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=900&q=80',
+    imgFallback:'https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=900&q=80',
+    need:'Un banco regional necesitaba reemplazar su core transaccional legado en COBOL por una arquitectura moderna sin downtime, manteniendo la operatoria durante toda la migración.',
+    solution:'TGV ejecutó migración incremental con patrón Strangler Fig: microservicios Java sobre Kubernetes reemplazando módulos COBOL uno a uno, con sincronización bidireccional.',
+    kpis:[{n:'0h',l:'downtime'},{n:'+60%',l:'velocidad transac.'},{n:'12 meses',l:'migración total'}],
+    url:'https://tgv.com.ar/casos-de-exito/'
+  },
+  {
+    tag:'Salud',cat:'dev',
+    t:'Plataforma de telemedicina — 200+ profesionales',
+    img:'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=900&q=80',
+    imgFallback:'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=900&q=80',
+    need:'Una red de salud privada necesitaba una plataforma de atención remota con historia clínica unificada, receta electrónica y videoconsulta, integrando múltiples especialidades.',
+    solution:'TGV desarrolló una plataforma web y móvil con historia clínica digital, firma electrónica de recetas, videoconsulta WebRTC y facturación a obras sociales integrada.',
+    kpis:[{n:'200+',l:'profesionales'},{n:'99.9%',l:'uptime'},{n:'4.2★',l:'satisfacción paciente'}],
+    url:'https://tgv.com.ar/casos-de-exito/'
+  },
+  {
+    tag:'Estrategia',cat:'bva',
+    t:'Roadmap digital — cadena retail nacional',
+    img:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=900&q=80',
+    imgFallback:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=900&q=80',
+    need:'Una cadena retail con 80+ sucursales necesitaba una hoja de ruta digital integral que priorizara iniciativas con ROI medible y alineamiento entre TI y negocio.',
+    solution:'TGV realizó diagnóstico AS-IS completo, benchmarking sectorial y workshop de priorización con dirección. Entregó 12 iniciativas con business case, roadmap ejecutivo y KPIs de seguimiento.',
+    kpis:[{n:'12',l:'iniciativas'},{n:'100%',l:'en tiempo y presupuesto'},{n:'ROI',l:'medible en c/caso'}],
+    url:'https://tgv.com.ar/casos-de-exito/'
+  }
+];
+
+const filters={all:'Todos',sap:'SAP',jde:'Oracle JDE',ia:'IA & Automatización',dev:'Desarrollo',fin:'Finanzas',bva:'Estrategia'};
+
+let cmpList=[];
+
+/* ═══════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════ */
+function go(id){
+  const el=document.getElementById(id);
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ═══════════════════════════════════════════
+   BUILD SERVICES
+═══════════════════════════════════════════ */
+function buildSvcs(){
+  const list=document.getElementById('svc-list');
+  const panels=document.getElementById('svc-panels');
+
+  const svcIcons={
+    sap:'<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>',
+    jde:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
+    ia:'<path d="M12 2a10 10 0 110 20 10 10 0 010-20zM12 8v4l3 3"/>',
+    dev:'<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+    fin:'<path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>',
+    bva:'<path d="M2 20h20M5 20V8l7-6 7 6v12"/>'
+  };
+
+  svcs.forEach((s,i)=>{
+    // sidebar row
+    const row=document.createElement('div');
+    row.className='svc-item'+(i===0?' act':'');
+    row.id='srow-'+s.id;
+    row.setAttribute('role','tab');
+    row.setAttribute('aria-selected',i===0?'true':'false');
+    row.setAttribute('tabindex','0');
+    row.setAttribute('aria-controls','spanel-'+s.id);
+    row.innerHTML=`
+      <div class="svc-item-info">
+        <div class="svc-item-name">${s.name}</div>
+        <div class="svc-item-sub">${s.sub}</div>
+      </div>
+      <div class="svc-item-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24">${svcIcons[s.id]||''}</svg>
+      </div>`;
+    row.onclick=()=>activateSvc(s.id);
+    row.onkeydown=(e)=>{if(e.key==='Enter'||e.key===' ')activateSvc(s.id)};
+    list.appendChild(row);
+
+    // panel
+    const panel=document.createElement('div');
+    panel.className='svc-panel'+(i===0?' act':'');
+    panel.id='spanel-'+s.id;
+    panel.setAttribute('role','tabpanel');
+    panel.setAttribute('aria-labelledby','srow-'+s.id);
+    // per-service "qué hacemos" icons
+    const queHacemos={
+      sap:[
+        {icon:'<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>',name:'Consultoría SAP',sub:'S/4HANA · BTP · ABAP · Fiori'},
+        {icon:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',name:'Integración CPI',sub:'SAP CPI · API Gateway · BTP'},
+        {icon:'<path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',name:'Soporte & AMS',sub:'SLA garantizado · 24/7'}
+      ],
+      jde:[
+        {icon:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',name:'EnterpriseOne',sub:'.Net, Java, SQL Server, Oracle'},
+        {icon:'<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',name:'Orchestrator',sub:'Automatización & APIs'},
+        {icon:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>',name:'Staff Augmentation',sub:'Expertos JDE dedicados'}
+      ],
+      ia:[
+        {icon:'<path d="M12 2a10 10 0 110 20 10 10 0 010-20zM12 8v4l3 3"/>',name:'RPA & Automatización',sub:'UiPath · Power Automate · AA'},
+        {icon:'<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>',name:'IA Generativa',sub:'Azure AI · Copilot · AI Builder'},
+        {icon:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',name:'Process Mining',sub:'Diagnóstico & mejora continua'}
+      ],
+      dev:[
+        {icon:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',name:'Front-End',sub:'HTML5, MVC / CCS, JQuery'},
+        {icon:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',name:'Back-End',sub:'.Net, Java, SQL Server, Oracle'},
+        {icon:'<path d="M1 6l4.5-2 5 2 5-2 4.5 2v14L16 18l-5 2-5-2L1 20z"/>',name:'SharePoint',sub:'Hosted apps & integrations'}
+      ],
+      fin:[
+        {icon:'<path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>',name:'Core Banking',sub:'COBOL · RPG · AS400'},
+        {icon:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',name:'Microservicios',sub:'Java · .NET · Strangler Fig'},
+        {icon:'<path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',name:'Banca Digital',sub:'APIs · Portales · Mobile'}
+      ],
+      bva:[
+        {icon:'<path d="M2 20h20M5 20V8l7-6 7 6v12"/>',name:'Diagnóstico IT',sub:'AS-IS · Benchmarking'},
+        {icon:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',name:'Roadmap Digital',sub:'Iniciativas priorizadas con ROI'},
+        {icon:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>',name:'Gobierno IT',sub:'CMMI · Change Management'}
+      ]
+    };
+    const comoHacemos=[
+      {icon:'<path d="M12 2a10 10 0 110 20M12 2C6.48 2 2 6.48 2 12"/><polyline points="2 12 7 7 12 12"/><polyline points="22 12 17 17 12 12"/>',name:'Proyectos de implementación a medida'},
+      {icon:'<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/>',name:'Servicio de AMS'},
+      {icon:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><polyline points="9 9 12 12 15 9"/>',name:'Testing Factory'},
+      {icon:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',name:'Staff Augmentation'}
+    ];
+    const ytVids={
+      sap:[{id:'GAR2OlqrdyE',title:'Consultoría SAP | TGV Excelencia Informática'}],
+      jde:[{id:'E29zoghtw00',title:'Oracle JD Edwards | TGV Excelencia Informática'}],
+      ia:[{id:'XjYCnsy45DM',title:'IA Empresarial | TGV Excelencia Informática'}],
+      dev:[
+        {id:'m4HaLH3LeRw',title:'Desarrollo de Aplicaciones | TGV Excelencia Informática'},
+        {id:'CBhvthUSP3U',title:'Desarrollo e Integración de Aplicaciones | TGV Excelencia Informática'}
+      ],
+      fin:[{id:'Sq_ye_ZcBUY',title:'Industria Financiera | TGV Excelencia Informática'}],
+      bva:[{id:'A7fcpGc3_1g',title:'Business Value Assessment | TGV Excelencia Informática'}]
+    };
+    const vids=ytVids[s.id]||ytVids.dev;
+
+    panel.innerHTML=`
+      <!-- TOP ROW: hero text left + video right -->
+      <div class="panel-hero-row">
+        <div class="panel-hero-left">
+          <div class="panel-hero-grid-bg" aria-hidden="true"></div>
+          <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:0;height:100%;justify-content:center">
+            <div class="panel-hero-eyebrow">${s.badge}</div>
+            <div class="panel-hero-title">${s.title}<small>Simplificá la complejidad tecnológica</small></div>
+            <div class="panel-hero-divider" aria-hidden="true"></div>
+            <p class="panel-hero-sub">${s.desc}</p>
+            <div class="panel-hero-btns">
+              <button class="btn-panel-pri" onclick="window.open('${s.url}','_blank')">Ver más</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-hero-right">
+          <div class="vc-wrap" id="vc-${s.id}">
+            <!-- slides -->
+            <div class="vc-stage">
+              ${vids.map((v,i)=>'<div class="vc-slide'+(i===0?' act':'')+'" data-i="'+i+'" onclick="window.open(\'https://www.youtube.com/watch?v='+v.id+'\',\'_blank\')">'+'<div class="panel-video-thumb"><img src="https://img.youtube.com/vi/'+v.id+'/maxresdefault.jpg" alt="'+v.title+'" style="width:100%;height:100%;object-fit:cover" onerror="this.src=\'https://img.youtube.com/vi/'+v.id+'/hqdefault.jpg\'"></div>'+'<div class="panel-video-play"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,.45)"/><polygon points="10,8 16,12 10,16" fill="white"/></svg></div>'+'<div class="panel-video-info"><div class="panel-video-yt"><div class="panel-video-yt-icon"></div></div><div class="vc-title">'+v.title+'</div><div class="panel-video-channel">TGV Excelencia Informática</div></div></div>').join('')}
+            </div>
+            <!-- overlay controls — only rendered when >1 video -->
+            ${vids.length>1?'<div class="vc-controls" onclick="event.stopPropagation()">'+'<button class="vc-arrow vc-prev" onclick="vcNav(\''+s.id+'\', -1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>'+'<div class="vc-dots">'+vids.map((_,i)=>'<span class="vc-dot'+(i===0?' act':'')+'" onclick="vcGo(\''+s.id+'\','+i+')"></span>').join('')+'</div>'+'<button class="vc-arrow vc-next" onclick="vcNav(\''+s.id+'\', 1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>'+'</div>':''}
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW: stack + cases, full width -->
+      <div class="panel-body-inner">
+        <div class="panel-section-label">Stack</div>
+        <div class="tech-tags" role="list">${s.techs.slice(0,6).map(t=>'<span class="tech-tag" role="listitem">'+t+'</span>').join('')}</div>
+        <div class="panel-section-label">Casos de éxito relacionados</div>
+        <div class="cases-simple">
+          ${s.cases.map((c,ci)=>'<a class="case-simple-row" href="'+(c.url||s.url)+'" target="_blank" rel="noopener"><span class="case-simple-tag">'+c.tag+'</span><span class="case-simple-name">'+c.name+'</span><div class="case-simple-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div></a>').join('')}
+        </div>
+      </div>
+    `;
+    panels.appendChild(panel);
+  });
+}
+
+/* ── Video Carousel Logic ── */
+const vcState={};
+const VC_INTERVAL=5000;
+
+function vcGo(svcId, idx){
+  const wrap=document.getElementById('vc-'+svcId);
+  if(!wrap)return;
+  const slides=wrap.querySelectorAll('.vc-slide');
+  const dots=wrap.querySelectorAll('.vc-dot');
+  const n=slides.length;
+  const i=((idx%n)+n)%n;
+  slides.forEach((s,si)=>s.classList.toggle('act',si===i));
+  dots.forEach((d,di)=>d.classList.toggle('act',di===i));
+  vcState[svcId]=i;
+}
+
+function vcNav(svcId, dir){
+  const cur=vcState[svcId]||0;
+  const wrap=document.getElementById('vc-'+svcId);
+  if(!wrap)return;
+  const n=wrap.querySelectorAll('.vc-slide').length;
+  vcGo(svcId,(cur+dir+n)%n);
+  /* reset autoplay timer */
+  if(vcState['_timer_'+svcId]){clearInterval(vcState['_timer_'+svcId])}
+  vcState['_timer_'+svcId]=setInterval(()=>vcNav(svcId,1),VC_INTERVAL);
+}
+
+function vcStartAuto(svcId){
+  const wrap=document.getElementById('vc-'+svcId);
+  if(!wrap||wrap.querySelectorAll('.vc-slide').length<2)return;
+  vcState[svcId]=0;
+  if(vcState['_timer_'+svcId])clearInterval(vcState['_timer_'+svcId]);
+  vcState['_timer_'+svcId]=setInterval(()=>vcNav(svcId,1),VC_INTERVAL);
+}
+
+function activateSvc(id){
+  document.querySelectorAll('.svc-item').forEach(r=>{
+    r.classList.remove('act');
+    r.setAttribute('aria-selected','false');
+  });
+  document.querySelectorAll('.svc-panel').forEach(p=>p.classList.remove('act'));
+  const row=document.getElementById('srow-'+id);
+  const panel=document.getElementById('spanel-'+id);
+  if(row){row.classList.add('act');row.setAttribute('aria-selected','true')}
+  if(panel)panel.classList.add('act');
+  /* start carousel autoplay for this service */
+  setTimeout(()=>vcStartAuto(id),50);
+}
+
+function toggleCase(svcId,ci){
+  const hd=document.getElementById('ah-'+svcId+'-'+ci);
+  const bd=document.getElementById('ab-'+svcId+'-'+ci);
+  const wasOpen=hd.classList.contains('open');
+  document.querySelectorAll('.case-acc-hd').forEach(h=>{h.classList.remove('open');h.setAttribute('aria-expanded','false')});
+  document.querySelectorAll('.case-acc-body').forEach(b=>b.classList.remove('open'));
+  if(!wasOpen){
+    hd.classList.add('open');
+    hd.setAttribute('aria-expanded','true');
+    bd.classList.add('open');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   COMPARE
+═══════════════════════════════════════════ */
+function toggleCmp(id){
+  if(cmpList.includes(id)){cmpList=cmpList.filter(x=>x!==id)}
+  else{if(cmpList.length>=3){alert('Podés comparar hasta 3 servicios a la vez');return}cmpList.push(id)}
+  updateCmpBar();
+  svcs.forEach(s=>{
+    const b=document.getElementById('bcmp-'+s.id);
+    if(!b)return;
+    const on=cmpList.includes(s.id);
+    b.textContent=on?'✓ Comparando':'+ Comparar';
+    b.className='btn-panel-sec'+(on?' on':'');
+  });
+}
+
+function updateCmpBar(){
+  const bar=document.getElementById('cmpbar');
+  const chips=document.getElementById('cmp-chips');
+  if(cmpList.length===0){bar.classList.remove('on');return}
+  bar.classList.add('on');
+  chips.innerHTML=cmpList.map(id=>{
+    const s=svcs.find(x=>x.id===id);
+    return `<div class="cmp-chip">${s.name}<span class="chip-x" onclick="toggleCmp('${id}')" role="button" tabindex="0" aria-label="Quitar ${s.name} del comparador">✕</span></div>`;
+  }).join('');
+  document.getElementById('cmp-go').onclick=()=>{
+    const names=cmpList.map(id=>svcs.find(x=>x.id===id).name).join(' vs ');
+    sendPrompt('Compará en detalle estos servicios de TGV: '+names+'. Incluí diferencias clave, casos de uso ideales y recomendación según tipo de empresa.');
+  };
+}
+
+/* ═══════════════════════════════════════════
+   BUILD CASES
+═══════════════════════════════════════════ */
+function buildCases(){
+  const filterRow=document.getElementById('filter-row');
+  const grid=document.getElementById('cases-grid');
+  let active='all';
+
+  Object.entries(filters).forEach(([k,v])=>{
+    const btn=document.createElement('button');
+    btn.className='filter-btn'+(k==='all'?' act':'');
+    btn.dataset.cat=k;
+    btn.textContent=v;
+    btn.setAttribute('aria-pressed',k==='all'?'true':'false');
+    btn.onclick=()=>{
+      active=k;
+      document.querySelectorAll('.filter-btn').forEach(b=>{
+        b.classList.toggle('act',b.dataset.cat===k);
+        b.setAttribute('aria-pressed',b.dataset.cat===k?'true':'false');
+      });
+      let visible=0;
+      const total=casesData.length;
+      document.querySelectorAll('.case-card').forEach(c=>{
+        const show=k==='all'||c.dataset.cat===k;
+        c.classList.toggle('hidden',!show);
+        if(show)visible++;
+      });
+      // reset featured span when filtering
+      document.querySelectorAll('.case-card:not(.hidden)').forEach((c,i)=>{
+        c.style.gridColumn=i===0&&k==='all'?'span 2':'';
+      });
+      // update result counter
+      const counter=document.getElementById('cases-counter');
+      if(counter) counter.innerHTML=`Mostrando <em>${visible}</em> de <em>${total}</em> casos`;
+      // empty state
+      const empty=document.getElementById('cases-empty');
+      if(empty) empty.classList.toggle('show',visible===0);
+    };
+    filterRow.appendChild(btn);
+  });
+
+  casesData.forEach((c,idx)=>{
+    const card=document.createElement('div');
+    card.className='case-card';
+    card.dataset.cat=c.cat;
+    card.setAttribute('role','listitem');
+    card.setAttribute('tabindex','0');
+    card.setAttribute('aria-label',`Caso de éxito: ${c.t}`);
+
+    // KPIs HTML
+    const kpisHtml=c.kpis.map(k=>`
+      <div class="cc-kpi">
+        <div class="cc-kpi-n">${k.n}</div>
+        <div class="cc-kpi-l">${k.l}</div>
+      </div>`).join('');
+
+    card.innerHTML=`
+      <div class="cc-img">
+        <img src="${c.img}" alt="${c.t}" loading="lazy" onerror="this.src='${c.imgFallback}'">
+        <div class="cc-img-overlay"></div>
+        <div class="cc-img-tag">${c.tag}</div>
+      </div>
+      <div class="cc-body">
+        <div class="cc-title">${c.t}</div>
+        <div class="cc-detail">
+          <div class="cc-row">
+            <div class="cc-row-label">Necesidad</div>
+            <div class="cc-row-text">${c.need}</div>
+          </div>
+          <div class="cc-row">
+            <div class="cc-row-label">Solución</div>
+            <div class="cc-row-text">${c.solution}</div>
+          </div>
+        </div>
+      </div>
+      <div class="cc-kpis">${kpisHtml}</div>
+      <div class="cc-cta">
+        <span class="cc-cta-text">Ver caso completo</span>
+        <div class="cc-cta-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>`;
+
+    card.onclick=()=>{
+      if(c.url&&c.url!=='https://tgv.com.ar/casos-de-exito/'){
+        window.open(c.url,'_blank');
+      } else {
+        sendPrompt('Contame en detalle el caso de éxito: '+c.t+'. Quiero saber metodología, tecnología usada y resultados.');
+      }
+    };
+    card.onkeydown=(e)=>{if(e.key==='Enter')card.click()};
+    grid.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   TEAM SLIDER
+═══════════════════════════════════════════ */
+const tsSlides=[
+  {
+    tag:'¿Por qué elegirnos?',
+    title:'Transformamos los proyectos\nmás desafiantes',
+    desc:'',
+    cta:'Ver casos de éxito',
+    bg:'url(https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=90) center/cover',
+    action:'¿Por qué elegir TGV como partner tecnológico?',
+    isWhy:true,
+    reasons:[
+      'Expertos en SAP y Oracle JDE con implementaciones en más de 16 países y cero go-lives fallidos.',
+      'Más de 30 años entendiendo las necesidades del negocio para generar propuestas de valor reales.',
+      'Delivery desde Argentina, México, EE.UU. y España — flexibilidad para integrarnos a equipos multiculturales.'
+    ]
+  },
+  {
+    tag:'Presencia internacional',
+    title:'Argentina · México · EE.UU.\nEspaña y toda Latam',
+    cta:'Ver nuestras regiones',
+    bg:'url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&q=85) center/cover',
+    action:'¿En qué regiones opera TGV y cómo trabajan con clientes internacionales?',
+    isWhy:true,
+    reasons:[
+      'Presencia directa en Argentina, México, EE.UU. y España con coordinación regional sin burocracia.',
+      'Proyectos ejecutados en más de 16 países bajo modalidad nearshore o in-house según cada cliente.',
+      'Equipos multiculturales con conocimiento local del negocio para garantizar resultados en cada región.'
+    ]
+  },
+  {
+    tag:'IA Empresarial en acción',
+    title:'Automatizando fondos\nde inversión con IA',
+    desc:'¿Necesitás reducir tiempos y costos en tu operación? La automatización inteligente puede ser la respuesta.',
+    cta:'Ver caso completo',
+    bg:'url(https://images.unsplash.com/photo-1639322537228-f710d846310a?w=1600&q=80) center/cover',
+    action:'Contame el detalle del caso de IA para fondos de inversión de TGV'
+  },
+  {
+    tag:'Certificación CMMI L3',
+    title:'Calidad medible\nen cada entrega',
+    desc:'Procesos de desarrollo certificados bajo estándares internacionales. Predictibilidad y mejora continua en cada proyecto.',
+    cta:'Conocer metodología',
+    bg:'url(https://images.unsplash.com/photo-1556761175-4b46a572b786?w=1600&q=80) center/cover',
+    action:'¿Qué implica la certificación CMMI L3 de TGV y cómo impacta en los proyectos?'
+  },
+  {
+    tag:'30+ años de historia',
+    title:'Desde 1993 transformando\nempresas líderes',
+    desc:'Tres décadas acompañando la evolución tecnológica de las empresas más importantes de Argentina y Latinoamérica.',
+    cta:'Nuestra historia',
+    bg:'url(https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=80) center/cover',
+    action:'Contame la historia de TGV desde sus inicios en 1993 hasta hoy'
+  }
+];
+
+let tsCurrent=0;
+let tsAuto;
+
+function buildSlider(){
+  const track=document.getElementById('ts-track');
+  const dots=document.getElementById('ts-dots');
+
+  tsSlides.forEach((s,i)=>{
+    // slide
+    const slide=document.createElement('div');
+    slide.className='ts-slide'+(i===0?' active':'');
+    slide.setAttribute('role','group');
+    slide.setAttribute('aria-label',`Slide ${i+1} de ${tsSlides.length}: ${s.tag}`);
+
+    if(s.isWhy){
+      // Special "¿Por qué elegirnos?" layout — two column
+      slide.innerHTML=`
+        <div class="ts-slide-bg" style="background:${s.bg}" aria-hidden="true"></div>
+        <div class="ts-slide-overlay" style="background:linear-gradient(105deg,rgba(5,5,5,.92) 0%,rgba(5,5,5,.80) 45%,rgba(5,5,5,.30) 100%)" aria-hidden="true"></div>
+        <div class="ts-why-layout">
+          <div class="ts-why-left">
+            <div class="ts-slide-title" style="font-size:clamp(26px,3.2vw,42px);margin-bottom:8px">${s.tag}</div>
+            <div class="ts-slide-title" style="font-size:clamp(26px,3.2vw,42px);margin-bottom:20px">${s.title.replace('\n','<br>')}</div>
+            <div style="width:40px;height:2px;background:var(--red);margin-bottom:28px"></div>
+            <button class="ts-slide-cta" onclick="go('casos')" style="align-self:flex-start">
+              ${s.cta}
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+          <div class="ts-why-right">
+            ${s.reasons.map((r,ri)=>`
+              <div class="ts-why-reason">
+                <div class="ts-why-num">0${ri+1}</div>
+                <p class="ts-why-text">${r}</p>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    } else if(s.isPresencia){
+      // Presencia internacional — left text + right image
+      slide.innerHTML=`
+        <div class="ts-slide-bg" style="background:rgba(5,5,5,1);position:absolute;inset:0;z-index:0"></div>
+        <div class="ts-presencia-layout">
+          <div class="ts-presencia-left" style="z-index:2">
+            <div class="ts-slide-tag">${s.tag}</div>
+            <div class="ts-slide-title">${s.title.replace('\n','<br>')}</div>
+            <p class="ts-slide-desc">${s.desc}</p>
+            <button class="ts-slide-cta" onclick="sendPrompt('${s.action}')">
+              ${s.cta}
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+          <div class="ts-presencia-right">
+            <img class="ts-presencia-img" src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=85" alt="Presencia internacional TGV" loading="lazy">
+            <div class="ts-presencia-overlay"></div>
+            <div class="ts-presencia-pins">
+              <div class="ts-pin" style="left:43%;top:70%" data-label="Argentina"></div>
+              <div class="ts-pin" style="left:38%;top:47%" data-label="México"></div>
+              <div class="ts-pin" style="left:36%;top:32%" data-label="EE.UU."></div>
+              <div class="ts-pin" style="left:67%;top:34%" data-label="España"></div>
+            </div>
+          </div>
+        </div>`;
+    } else {
+      slide.innerHTML=`
+        <div class="ts-slide-bg" style="background:${s.bg}" aria-hidden="true"></div>
+        <div class="ts-slide-overlay" aria-hidden="true"></div>
+        <div class="ts-slide-content">
+          <div class="ts-slide-tag">${s.tag}</div>
+          <div class="ts-slide-title">${s.title.replace('\n','<br>')}</div>
+          <p class="ts-slide-desc">${s.desc}</p>
+          <button class="ts-slide-cta" onclick="sendPrompt('${s.action}')">
+            ${s.cta}
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>`;
+    }
+    track.appendChild(slide);
+
+    // dot
+    const dot=document.createElement('div');
+    dot.className='ts-dot'+(i===0?' active':'');
+    dot.onclick=()=>tsGo(i);
+    dots.appendChild(dot);
+  });
+
+  tsUpdateCounter();
+  tsStartAuto();
+}
+
+function tsGo(idx){
+  const slides=document.querySelectorAll('.ts-slide');
+  const dots=document.querySelectorAll('.ts-dot');
+  slides[tsCurrent].classList.remove('active');
+  dots[tsCurrent].classList.remove('active');
+  tsCurrent=((idx%tsSlides.length)+tsSlides.length)%tsSlides.length;
+  slides[tsCurrent].classList.add('active');
+  dots[tsCurrent].classList.add('active');
+  document.getElementById('ts-track').style.transform=`translateX(-${tsCurrent*100}%)`;
+  tsUpdateCounter();
+}
+
+function tsMove(dir){
+  clearInterval(tsAuto);
+  tsGo(tsCurrent+dir);
+  tsStartAuto();
+}
+
+function tsUpdateCounter(){
+  const c=document.getElementById('ts-counter');
+  if(c)c.innerHTML=`<em>${String(tsCurrent+1).padStart(2,'0')}</em> / ${String(tsSlides.length).padStart(2,'0')}`;
+}
+
+function tsStartAuto(){
+  tsAuto=setInterval(()=>tsGo(tsCurrent+1),9000);
+}
+
+// Pause on hover
+document.addEventListener('DOMContentLoaded',()=>{
+  const slider=document.getElementById('team-slider');
+  if(slider){
+    slider.addEventListener('mouseenter',()=>clearInterval(tsAuto));
+    slider.addEventListener('mouseleave',()=>tsStartAuto());
+    // keyboard nav
+    slider.addEventListener('keydown',(e)=>{
+      if(e.key==='ArrowLeft')tsMove(-1);
+      if(e.key==='ArrowRight')tsMove(1);
+    });
+  }
+});
+
+/* ═══════════════════════════════════════════
+   SCROLL PROGRESS + NAV ACTIVE
+═══════════════════════════════════════════ */
+window.addEventListener('scroll',()=>{
+  // progress bar
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('progress').style.width=Math.round(h>0?(scrollY/h)*100:0)+'%';
+  // nav active state
+  const sections=['hero','servicios','why','casos','footer'];
+  const nls=document.querySelectorAll('.nl');
+  let current=0;
+  sections.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el&&scrollY>=el.offsetTop-80)current=i;
+  });
+  nls.forEach((nl,i)=>{nl.classList.toggle('act',i===current)});
+},{passive:true});
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+buildSvcs();
+buildCases();
+buildSlider();
+activateSvc('sap');
+
+/* ═══════════════════════════════════════════
+   PAGE OVERLAY SYSTEM
+═══════════════════════════════════════════ */
+const pages={};
+
+function buildPages(){
+  // ── CASOS DE ÉXITO ──
+  const casosHtml=`
+<div class="page-inner">
+  <button class="page-back" onclick="closePage()">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Volver al inicio
+  </button>
+  <div class="page-hero">
+    <div class="page-eyebrow">Portafolio</div>
+    <h1 class="page-title">Historias de éxito</h1>
+    <p class="page-sub">Proyectos reales con impacto medible. SAP, Oracle JDE, IA, Desarrollo y Finanzas en más de 16 países.</p>
+  </div>
+  <div class="cases-page-grid" id="casos-page-grid"></div>
+  <div class="page-divider"></div>
+  <div style="text-align:center;padding:24px 0">
+    <p style="color:rgba(255,255,255,.25);font-size:12px;margin-bottom:16px">¿Tu empresa podría ser el próximo caso de éxito?</p>
+    <button class="btn-primary" onclick="closePage();sendPrompt('Quiero hablar con TGV sobre mi proyecto')">
+      Hablemos de tu proyecto
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>`;
+
+  // ── NOSOTROS ──
+  const nosotrosHtml=`
+<div class="page-inner">
+  <button class="page-back" onclick="closePage()">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Volver al inicio
+  </button>
+  <div class="page-hero">
+    <div class="page-eyebrow">La empresa</div>
+    <h1 class="page-title">Somos TGV</h1>
+    <p class="page-sub">Más de 30 años transformando empresas en Argentina, México, EE.UU. y España con soluciones tecnológicas de clase mundial.</p>
+  </div>
+  <div class="nosotros-grid">
+    <div class="nos-card">
+      <div class="nos-card-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+      <div class="nos-card-title">Nuestro equipo</div>
+      <div class="nos-card-text">Más de 200 profesionales especializados en SAP, Oracle, IA y desarrollo. Equipos multidisciplinarios que se adaptan a cualquier cultura organizacional y modelo de trabajo — nearshore o in-house.</div>
+      <div class="nos-card-link" onclick="window.open('https://tgv.com.ar/quienes-somos/','_blank')">Ver equipo <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="nos-card">
+      <div class="nos-card-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="nos-card-title">Alianzas y certificaciones</div>
+      <div class="nos-card-text">Partner certificado SAP y Oracle. Certificación CMMI Maturity Level 3 que garantiza calidad en cada entrega. Alianzas con IBM, Microsoft y líderes tecnológicos globales para ofrecer soluciones end-to-end.</div>
+      <div class="nos-card-link" onclick="window.open('https://tgv.com.ar/alianzas-y-certificaciones/','_blank')">Ver certificaciones <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="nos-card">
+      <div class="nos-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div class="nos-card-title">Nuestra historia</div>
+      <div class="nos-card-text">Fundada en Argentina en los años 90, TGV creció de una consultora local a una empresa con presencia en 4 países y proyectos en más de 16. Tres décadas de experiencia resolviendo los desafíos tecnológicos más complejos de la región.</div>
+      <div class="nos-card-link" onclick="window.open('https://tgv.com.ar/nuestra-historia/','_blank')">Ver historia <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="nos-card">
+      <div class="nos-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+      <div class="nos-card-title">Nuestra visión</div>
+      <div class="nos-card-text">Ser el socio tecnológico de referencia en Latinoamérica, impulsando la transformación digital con responsabilidad social. Comprometidos con el desarrollo de talento local y la sustentabilidad de los negocios de nuestros clientes.</div>
+      <div class="nos-card-link" onclick="window.open('https://tgv.com.ar/responsabilidad-social/','_blank')">Ver visión <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+  </div>
+  <div class="page-divider"></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.04);margin-bottom:40px">
+    <div style="background:#111;padding:28px 24px;text-align:center">
+      <div style="font-size:36px;font-weight:800;color:#fff;letter-spacing:-1px">30<span style="color:var(--red)">+</span></div>
+      <div style="font-size:10px;color:rgba(255,255,255,.25);letter-spacing:1px;text-transform:uppercase;margin-top:4px">Años de trayectoria</div>
+    </div>
+    <div style="background:#111;padding:28px 24px;text-align:center">
+      <div style="font-size:36px;font-weight:800;color:#fff;letter-spacing:-1px">16<span style="color:var(--red)">+</span></div>
+      <div style="font-size:10px;color:rgba(255,255,255,.25);letter-spacing:1px;text-transform:uppercase;margin-top:4px">Países activos</div>
+    </div>
+    <div style="background:#111;padding:28px 24px;text-align:center">
+      <div style="font-size:36px;font-weight:800;color:#fff;letter-spacing:-1px">200<span style="color:var(--red)">+</span></div>
+      <div style="font-size:10px;color:rgba(255,255,255,.25);letter-spacing:1px;text-transform:uppercase;margin-top:4px">Profesionales</div>
+    </div>
+    <div style="background:#111;padding:28px 24px;text-align:center">
+      <div style="font-size:36px;font-weight:800;color:#fff;letter-spacing:-1px">CMMI</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.25);letter-spacing:1px;text-transform:uppercase;margin-top:4px">Level 3 certificado</div>
+    </div>
+  </div>
+</div>`;
+
+  // ── SERVICIOS ──
+  const serviciosHtml=`
+<div class="page-inner">
+  <button class="page-back" onclick="closePage()">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Volver al inicio
+  </button>
+  <div class="page-hero">
+    <div class="page-eyebrow">Soluciones</div>
+    <h1 class="page-title">Nuestros servicios</h1>
+    <p class="page-sub">Implementación, desarrollo y automatización con las plataformas líderes del mercado.</p>
+  </div>
+  <div class="svc-page-list">
+    <div class="svc-page-row" id="sap-anchor" onclick="closePage();activateSvc('sap');go('servicios')">
+      <div><div class="svc-page-name">Consultoría SAP</div><div class="svc-page-sub">S/4HANA · ECC · BTP · Fiori</div></div>
+      <div class="svc-page-desc">Implementación, migración y soporte SAP en todas sus capas — desde ABAP hasta SAP Analytics Cloud. Partner certificado con experiencia en 16+ países.</div>
+      <div class="svc-page-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="svc-page-row" id="jde-anchor" onclick="closePage();activateSvc('jde');go('servicios')">
+      <div><div class="svc-page-name">Oracle JD Edwards</div><div class="svc-page-sub">EnterpriseOne · Orchestrator · BI Publisher</div></div>
+      <div class="svc-page-desc">Consultoría y desarrollo sobre JDE EnterpriseOne y World. Orchestrator, integraciones, seguridad y modernización de procesos con tecnología Oracle.</div>
+      <div class="svc-page-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="svc-page-row" id="ia-anchor" onclick="closePage();activateSvc('ia');go('servicios')">
+      <div><div class="svc-page-name">IA Empresarial</div><div class="svc-page-sub">RPA · Power Platform · UiPath · GenAI</div></div>
+      <div class="svc-page-desc">Automatización inteligente con RPA, IA generativa y agentes conversacionales. Reducimos tareas manuales y aceleramos la toma de decisiones basadas en datos.</div>
+      <div class="svc-page-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="svc-page-row" id="dev-anchor" onclick="closePage();activateSvc('dev');go('servicios')">
+      <div><div class="svc-page-name">Desarrollo de Aplicaciones</div><div class="svc-page-sub">Angular · React · .NET · Java · Mobile</div></div>
+      <div class="svc-page-desc">Fábrica de software CMMI L3. Desde MVPs hasta plataformas críticas — web, mobile y APIs con metodología ágil y ownership completo del equipo TGV.</div>
+      <div class="svc-page-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="svc-page-row" id="fin-anchor" onclick="closePage();activateSvc('fin');go('servicios')">
+      <div><div class="svc-page-name">Industria Financiera</div><div class="svc-page-sub">COBOL · Core Banking · Microservicios</div></div>
+      <div class="svc-page-desc">Soluciones de alta transaccionalidad para banca, seguros y medios de pago. Modernización legacy sin downtime con arquitectura strangler fig y microservicios.</div>
+      <div class="svc-page-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="svc-page-row" id="bva-anchor" onclick="closePage();activateSvc('bva');go('servicios')">
+      <div><div class="svc-page-name">Business Value Assessment</div><div class="svc-page-sub">Estrategia · Gobierno IT · Roadmap digital</div></div>
+      <div class="svc-page-desc">Alineamos tecnología con objetivos de negocio. Análisis de madurez, benchmarking, selección de ERP y hoja de ruta con ROI medible en cada iniciativa.</div>
+      <div class="svc-page-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+  </div>
+</div>`;
+
+  // ── TENDENCIAS / BLOG ──
+  const blogPosts=[
+    {tag:'SAP',title:'5 pasos clave para migrar a SAP S/4HANA sin detener tu operación',excerpt:'La migración a S/4HANA es una oportunidad de transformación, no sólo un upgrade técnico. Te compartimos la metodología que usamos en más de 16 países.',date:'Febrero 2026',url:'https://tgv.com.ar/blog/'},
+    {tag:'IA Empresarial',title:'Cómo la IA generativa está cambiando la gestión de fondos de inversión',excerpt:'Los agentes de IA ya automatizan back-office en los principales fondos argentinos. Resultados, desafíos y lecciones aprendidas en producción.',date:'Enero 2026',url:'https://tgv.com.ar/blog/'},
+    {tag:'Oracle JDE',title:'Orchestrator Framework: el poder oculto de JD Edwards para automatización',excerpt:'Muchas empresas tienen JDE y no usan Orchestrator. Explicamos qué es, cómo funciona y qué procesos podés automatizar hoy sin código adicional.',date:'Diciembre 2025',url:'https://tgv.com.ar/blog/'},
+    {tag:'Desarrollo',title:'CMMI Level 3: qué significa y por qué importa al contratar una fábrica de software',excerpt:'No es sólo un certificado. CMMI L3 implica procesos definidos, medición continua y mejora sistemática. Te explicamos cómo impacta en tu proyecto.',date:'Noviembre 2025',url:'https://tgv.com.ar/blog/'},
+    {tag:'Banca',title:'Modernización core bancario: patrones reales para migrar sin riesgo',excerpt:'Strangler Fig, CQRS y Event Sourcing aplicados a entornos COBOL productivos. Casos y anti-patrones que aprendimos migrando bancos reales.',date:'Octubre 2025',url:'https://tgv.com.ar/blog/'},
+    {tag:'Estrategia',title:'Business Value Assessment: cómo alinear TI y negocio antes de cualquier proyecto',excerpt:'El error más costoso en tecnología es implementar la solución correcta para el problema equivocado. El BVA existe para que eso no pase.',date:'Septiembre 2025',url:'https://tgv.com.ar/blog/'},
+  ];
+  const tendenciasHtml=`
+<div class="page-inner">
+  <button class="page-back" onclick="closePage()">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Volver al inicio
+  </button>
+  <div class="page-hero">
+    <div class="page-eyebrow">Blog & Insights</div>
+    <h1 class="page-title">Tendencias TGV</h1>
+    <p class="page-sub">Perspectivas del equipo TGV sobre SAP, IA, Oracle y estrategia digital para empresas en transformación.</p>
+  </div>
+  <div class="blog-grid">
+    ${blogPosts.map(p=>`
+    <div class="blog-card" onclick="window.open('${p.url}','_blank')">
+      <div class="blog-tag">${p.tag}</div>
+      <div class="blog-title">${p.title}</div>
+      <div class="blog-excerpt">${p.excerpt}</div>
+      <div class="blog-date">${p.date}</div>
+    </div>`).join('')}
+  </div>
+  <div class="page-divider"></div>
+  <div style="text-align:center;padding:16px 0">
+    <button class="btn-outline" onclick="window.open('https://tgv.com.ar/blog/','_blank')" style="color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.12);padding:12px 28px;font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;background:transparent;cursor:pointer">Ver todos los artículos →</button>
+  </div>
+</div>`;
+
+  // ── CONTACTO ──
+  const contactoHtml=`
+<div class="page-inner">
+  <button class="page-back" onclick="closePage()">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Volver al inicio
+  </button>
+  <div class="page-hero">
+    <div class="page-eyebrow">Contacto</div>
+    <h1 class="page-title">Hablemos</h1>
+    <p class="page-sub">Contanos tu desafío y te conectamos con el especialista adecuado en menos de 24 horas.</p>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-info">
+      <h3>Nuestras oficinas</h3>
+      <div class="contact-region">
+        <div class="cr-name">🇦🇷 Argentina</div>
+        <div class="cr-detail">+54 11 7145-2924<br>info@tgv.com.ar<br>tgv.com.ar</div>
+      </div>
+      <div class="contact-region">
+        <div class="cr-name">🇲🇽 México</div>
+        <div class="cr-detail">+52 81 2092 2323<br>info@exsoinf.com<br>exsoinf.com</div>
+      </div>
+      <div class="contact-region">
+        <div class="cr-name">🇺🇸 USA</div>
+        <div class="cr-detail">+1 561 306-5121<br>info@tgvamericas.net<br>tgvamericas.net</div>
+      </div>
+      <div class="contact-region">
+        <div class="cr-name">🇪🇸 España</div>
+        <div class="cr-detail">+34 952 569 582<br>info@tegeve.es<br>tegeve.es</div>
+      </div>
+      <div style="margin-top:20px;display:flex;gap:10px">
+        <a href="https://www.linkedin.com/company/tgv/" target="_blank" style="color:rgba(255,255,255,.3);font-size:11px;border:1px solid rgba(255,255,255,.07);padding:8px 14px;transition:all .15s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.3)'">LinkedIn</a>
+        <a href="https://www.instagram.com/tgvgroup/" target="_blank" style="color:rgba(255,255,255,.3);font-size:11px;border:1px solid rgba(255,255,255,.07);padding:8px 14px;transition:all .15s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Instagram</a>
+        <a href="https://www.linkedin.com/company/tgv/jobs/" target="_blank" style="color:rgba(255,255,255,.3);font-size:11px;border:1px solid rgba(255,255,255,.07);padding:8px 14px;transition:all .15s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Sumate →</a>
+      </div>
+    </div>
+    <div class="contact-form-area">
+      <h3 style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px">Envianos un mensaje</h3>
+      <p style="font-size:11px;color:rgba(255,255,255,.25);margin-bottom:4px">O usá el chat para hablar directamente con nuestro equipo.</p>
+      <label class="cf-label">Nombre y empresa</label>
+      <input class="cf-input" type="text" placeholder="Juan García — ACME S.A.">
+      <label class="cf-label">Email</label>
+      <input class="cf-input" type="email" placeholder="juan@empresa.com">
+      <label class="cf-label">¿En qué podemos ayudarte?</label>
+      <textarea class="cf-input cf-textarea" placeholder="Contanos brevemente tu proyecto o necesidad..."></textarea>
+      <button class="cf-submit" onclick="sendPrompt('Quiero contactar a TGV para hablar sobre mi proyecto de transformación digital')">Enviar mensaje →</button>
+      <p style="font-size:10px;color:rgba(255,255,255,.18);margin-top:10px">O escribinos directo al chat y te atendemos ahora.</p>
+    </div>
+  </div>
+</div>`;
+
+  pages['casos-page']=casosHtml;
+  pages['nosotros-page']=nosotrosHtml;
+  pages['servicios-page']=serviciosHtml;
+  pages['tendencias-page']=tendenciasHtml;
+  pages['contacto-page']=contactoHtml;
+
+  // Populate casos page with real data
+  setTimeout(()=>{
+    const grid=document.getElementById('casos-page-grid');
+    if(!grid)return;
+    const allCases=[
+      {tag:'SAP',cat:'sap',t:'Transformación integral hacia SAP S/4HANA',img:'https://tgv.com.ar/wp-content/uploads/2025/11/engineer-of-industry-lab-control-quality-of-gravel-2025-03-13-23-47-35-utc-1-1-scaled.jpg',desc:'Modernización de plataforma tecnológica, migrando de SAP ECC a SAP S/4HANA Cloud.',kpis:[{n:'S/4HANA',l:'Cloud'},{n:'0',l:'rollbacks'}],url:'https://tgv.com.ar/caso-transformacion-sap-s4-hana/'},
+      {tag:'Desarrollo',cat:'dev',t:'Software Factory para empresa de seguros',img:'https://tgv.com.ar/wp-content/uploads/2025/10/1_miOWAWuSZV81YJBX1mtR5A.jpg',desc:'Adaptación del sistema a la realidad local sin apartarse del estándar regional.',kpis:[{n:'100%',l:'estándar regional'},{n:'On time',l:'entrega'}],url:'https://tgv.com.ar/caso-de-exito-desarrollo-de-aplicaciones-software-factory-para-empresa-de-seguros/'},
+      {tag:'IA Empresarial',cat:'ia',t:'Automatización con IA de planificación logística',img:'https://tgv.com.ar/wp-content/uploads/2026/02/Casos-de-exito-web.png',desc:'Automatización de planificación para eliminar tareas manuales en operación logística Oil & Gas.',kpis:[{n:'100%',l:'automatizado'},{n:'-38%',l:'costo'}],url:'https://tgv.com.ar/caso-de-uso-ia-empresarial-programador-logistico/'},
+      {tag:'Finanzas',cat:'fin',t:'Banca: integración de sistemas legacy',img:'https://tgv.com.ar/wp-content/uploads/2025/03/development-for-financial-services-tgvamericas.png',desc:'Integración de sistemas actuales con nuevas aplicaciones para institución financiera líder.',kpis:[{n:'0h',l:'downtime'},{n:'+60%',l:'velocidad'}],url:'https://tgv.com.ar/caso-de-exito-integracion-sistemas-financieros/'},
+      {tag:'Desarrollo',cat:'dev',t:'Aplicación para cálculo de rating en bancos',img:'https://tgv.com.ar/wp-content/uploads/2024/11/1-1.webp',desc:'Una única aplicación para determinar el cálculo crediticio y rating en entidades financieras.',kpis:[{n:'1',l:'plataforma unificada'},{n:'Real-time',l:'cálculo'}],url:'https://tgv.com.ar/caso-de-exito-wbs-comafi/'},
+      {tag:'SAP',cat:'sap',t:'MINT — Monitor de integraciones SAP',img:'https://tgv.com.ar/wp-content/uploads/2024/11/Casos-de-exito-web-1.webp',desc:'Solución para detectar y resolver errores de integración entre sistemas en tiempo real.',kpis:[{n:'Real-time',l:'monitoreo'},{n:'-70%',l:'MTTR'}],url:'https://tgv.com.ar/caso-de-exito-sap/'},
+      {tag:'IA Empresarial',cat:'ia',t:'Business Intelligence para Kimberly-Clark',img:'https://tgv.com.ar/wp-content/uploads/2024/06/3.png',desc:'Inteligencia de datos para predecir escenarios y tomar decisiones en base a tendencias de mercado.',kpis:[{n:'Predictivo',l:'modelo BI'},{n:'360°',l:'visibilidad'}],url:'https://tgv.com.ar/caso-de-exito-kimberly-clark/'},
+      {tag:'IA Empresarial',cat:'ia',t:'Automatización de Fondos Comunes de Inversión',img:'https://tgv.com.ar/wp-content/uploads/2024/11/tgvsap-scaled-e1732203451564.webp',desc:'Reducción de tiempos y costos en operación de fondos mediante automatización inteligente.',kpis:[{n:'-45%',l:'tiempo operativo'},{n:'99.9%',l:'precisión'}],url:'https://tgv.com.ar/ia-empresarial-caso-de-exito/'},
+      {tag:'Oracle JDE',cat:'jde',t:'Nutrien: la seguridad como estrategia',img:'https://tgv.com.ar/wp-content/uploads/2024/11/5-4.webp',desc:'Optimización del ERP y definición de roles y perfiles para una operación segura en agroindustria.',kpis:[{n:'10K+',l:'facturas/mes'},{n:'0',l:'intervención manual'}],url:'https://tgv.com.ar/caso-de-exito-oracle-nutrien/'},
+      {tag:'BVA',cat:'bva',t:'Assessment de procesos para Grupo Motta',img:'https://tgv.com.ar/wp-content/uploads/2024/11/7-4.webp',desc:'Reingeniería de procesos para unificar operaciones en un ERP único para el grupo.',kpis:[{n:'1 ERP',l:'unificado'},{n:'Multi-país',l:'alcance'}],url:'https://tgv.com.ar/caso-de-exito-business-value-assessment-motta/'},
+      {tag:'SAP',cat:'sap',t:'Soporte adaptable para ecosistema productivo',img:'https://tgv.com.ar/wp-content/uploads/2019/03/MISIONokkk.jpg',desc:'Resolución de incidencias y atención a consultas de usuarios en entorno SAP productivo.',kpis:[{n:'24/7',l:'soporte activo'},{n:'SLA',l:'garantizado'}],url:'https://tgv.com.ar/caso-de-exito-sap-soporte'},
+      {tag:'Oracle JDE',cat:'jde',t:'AGCO: ERP adaptable y vínculos de confianza',img:'https://tgv.com.ar/wp-content/uploads/2026/02/Casos-de-exito-web-1.png',desc:'ERP robusto que permite adaptación rápida de procesos a cambios del negocio agroindustrial.',kpis:[{n:'Flexible',l:'arquitectura'},{n:'Multi-país',l:'deploy'}],url:'https://tgv.com.ar/caso-de-exito-oracle-agco/'},
+    ];
+    allCases.forEach(c=>{
+      const card=document.createElement('div');
+      card.className='case-page-card';
+      card.onclick=()=>window.open(c.url,'_blank');
+      card.innerHTML=`
+        <div class="cpc-tag">${c.tag}</div>
+        <img class="cpc-img" src="${c.img}" alt="${c.t}" loading="lazy" onerror="this.style.display='none'">
+        <div class="cpc-title">${c.t}</div>
+        <div class="cpc-desc">${c.desc}</div>
+        <div class="cpc-kpis">
+          ${c.kpis.map(k=>`<div><div class="cpc-kpi-n">${k.n}</div><div class="cpc-kpi-l">${k.l}</div></div>`).join('')}
+        </div>
+        <div class="cpc-link">Ver caso <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>`;
+      grid.appendChild(card);
+    });
+  },100);
+}
+
+function openPage(id){
+  const overlay=document.getElementById('page-overlay');
+  if(!pages[id])return;
+  overlay.innerHTML=pages[id];
+  overlay.classList.add('open');
+  overlay.scrollTop=0;
+  document.body.style.overflow='hidden';
+  // update url hash
+  history.pushState({page:id},'',`#${id.replace('-page','')}`);
+}
+
+function closePage(){
+  const overlay=document.getElementById('page-overlay');
+  overlay.classList.remove('open');
+  document.body.style.overflow='';
+  history.pushState({},'','#');
+}
+
+// ESC to close
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePage()});
+
+// handle browser back
+window.addEventListener('popstate',e=>{
+  if(!e.state||!e.state.page)closePage();
+});
+
+/* ── TOAST ── */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  if(!t)return;
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+/* ── BACK TO TOP ── */
+window.addEventListener('scroll',()=>{
+  const btn=document.getElementById('back-top');
+  if(btn) btn.classList.toggle('show',window.scrollY>500);
+},{passive:true});
+document.getElementById('back-top').onclick=()=>
+  window.scrollTo({top:0,behavior:'smooth'});
+
+/* ── INIT COUNTER ── */
+function initCounter(){
+  const counter=document.getElementById('cases-counter');
+  if(counter) counter.innerHTML=`Mostrando <em>${casesData.length}</em> de <em>${casesData.length}</em> casos`;
+}
+
+/* ── SENDPROMPT FALLBACK con toast feedback ── */
+if(typeof sendPrompt==='undefined'){
+  window.sendPrompt=function(msg){
+    showToast('Conectando con el equipo TGV…');
+  };
+}else{
+  const _orig=window.sendPrompt;
+  window.sendPrompt=function(msg){
+    showToast('Conectando con el equipo TGV…');
+    _orig(msg);
+  };
+}
+
+buildPages();
+initCounter();
+
+</script>
+</body>
+</html>
